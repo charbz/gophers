@@ -21,7 +21,6 @@ go get github.com/charbz/gophers
 ```go
 import (
   "github.com/charbz/gophers/pkg/collections"
-  "github.com/charbz/gophers/pkg/utils"
 )
 
 // Create a new collection
@@ -75,6 +74,14 @@ numbers.FilterNot(func(n int) bool {
 ### Map, Reduce, Partition
 
 ```go
+import (
+  "github.com/charbz/gophers/pkg/collections"
+  "github.com/charbz/gophers/pkg/utils"
+)
+
+// Create a new collection
+numbers := collections.NewCollection([]int{1, 2, 3, 4, 5})
+
 utils.Map(numbers.ToSlice(), func(n int) int {
   return n * 2
 }) // [2,4,6,8,10]
