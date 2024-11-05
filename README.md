@@ -29,9 +29,13 @@ numbers := collections.NewCollection([]int{1, 2, 3, 4, 5})
 
 // Basic operations
 numbers.Head() // 1
+
 numbers.Last() // 5
+
 numbers.Take(3) // [1,2,3]
+
 numbers.TakeRight(2) // [4,5]
+
 numbers.Drop(2) // [3,4,5]
 
 numbers.Filter(func(n int) bool {
