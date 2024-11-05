@@ -1,4 +1,4 @@
-# Goutils - functional utilities for Collections
+# Gophers - functional utilities for generic collections
 
 A lightweight Go library providing functional programming utilities for working with generic collections. This library offers a clean, type-safe API for common collection operations inspired by functional programming patterns.
 
