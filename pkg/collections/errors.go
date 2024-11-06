@@ -12,5 +12,7 @@ func (e *CollectionError) Error() string {
 }
 
 var (
-	EmptyCollectionError = &CollectionError{Code: 100, Msg: "invalid operation on an empty collection"}
+	EmptyCollectionError = &CollectionError{
+		Code: 100, Msg: "invalid operation on an empty collection",
+	}
 )
