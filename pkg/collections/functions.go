@@ -20,6 +20,25 @@ import (
 	"github.com/charbz/gophers/pkg/utils"
 )
 
+// Map takes a collection of type T and a mapping function func(T) K,
+// applies the mapping function to each element and returns a collection of type K.
+//
+// example usage:
+//
+//	names := NewCollection([]string{"Alice", "Bob", "Charlie"})
+//	Map(names, func(name string) int {
+//	  return len(name)
+//	})
+//
+// output:
+//
+//	[5,3,6]
+func Map[T any, K any](s *Collection[T], f func(T) K) *Collection[K] {
+	return &Collection[K]{
+		utils.Map(s.elements, f),
+	}
+}
+
 // Reduce takes a collection of type T, a reducing function func(K, T) K,
 // and an initial value of type K as parameters. It applies the reducing
 // function to each element and returns the resulting value K.
@@ -32,25 +51,9 @@ import (
 //	  return accumulator + number
 //	}, 0)
 //
-// output: 21
+// output:
+//
+//	21
 func Reduce[T any, K any](s *Collection[T], f func(K, T) K, init K) K {
 	return utils.Reduce(s.elements, f, init)
-}
-
-// Map takes a collection of type T and a mapping function func(T) K,
-// applies the mapping function to each element and returns a collection of type K.
-//
-// example usage:
-//
-//	names := NewCollection([]string{"Alice", "Bob", "Charlie"})
-//
-//	Map(names, func(name string) int {
-//	  return len(name)
-//	})
-//
-// output: [5,3,6]
-func Map[T any, K any](s *Collection[T], f func(T) K) *Collection[K] {
-	return &Collection[K]{
-		utils.Map(s.elements, f),
-	}
 }

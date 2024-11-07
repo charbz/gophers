@@ -44,12 +44,14 @@ func (c *Collection[T]) Length() int {
 // Head returns the first element in a Collection and a nil error.
 // If the collection is empty, it returns the zero value and an error.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]string{"A","B","C"})
 //	c.Head()
 //
-// output: "A", nil
+// output:
+//
+//	"A", nil
 func (c *Collection[T]) Head() (T, error) {
 	if c.IsEmpty() {
 		return c.zeroT(), emptyCollectionError
@@ -60,12 +62,14 @@ func (c *Collection[T]) Head() (T, error) {
 // Last returns the last element in the Collection and a nil error.
 // If the collection is empty, it returns the zero value and an error.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]string{"A","B","C"})
 //	c.Last()
 //
-// output: "C", nil
+// output:
+//
+//	"C", nil
 func (c *Collection[T]) Last() (T, error) {
 	if c.IsEmpty() {
 		return c.zeroT(), emptyCollectionError
@@ -75,12 +79,14 @@ func (c *Collection[T]) Last() (T, error) {
 
 // Tail returns a new collection containing all elements excluding the first one.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.Tail()
 //
-// output: [2,3,4,5,6]
+// output:
+//
+//	[2,3,4,5,6]
 func (c *Collection[T]) Tail() *Collection[T] {
 	if c.IsEmpty() {
 		return c
@@ -92,12 +98,14 @@ func (c *Collection[T]) Tail() *Collection[T] {
 
 // Init returns a collection containing all elements excluding the last one.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.Tail()
 //
-// output: [1,2,3,4,5]
+// output:
+//
+//	[1,2,3,4,5]
 func (c *Collection[T]) Init() *Collection[T] {
 	if c.IsEmpty() {
 		return c
@@ -109,12 +117,14 @@ func (c *Collection[T]) Init() *Collection[T] {
 
 // Take returns a new collection containing the first n elements.
 //
-// example:
+// example usage:
 //
 //	[c := NewCollection([]int{1,2,3,4,5,6})
 //	c.Take(3)
 //
-// output: [1,2,3]
+// output:
+//
+//	[1,2,3]
 func (c *Collection[T]) Take(n int) *Collection[T] {
 	if n <= 0 {
 		return c.zero()
@@ -126,12 +136,14 @@ func (c *Collection[T]) Take(n int) *Collection[T] {
 
 // TakeRight returns a new collection containing the last n elements.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.TakeRight(3)
 //
-// output: [4,5,6]
+// output:
+//
+//	[4,5,6]
 func (c *Collection[T]) TakeRight(n int) *Collection[T] {
 	if n <= 0 {
 		return c.zero()
@@ -143,12 +155,14 @@ func (c *Collection[T]) TakeRight(n int) *Collection[T] {
 
 // Drop returns a new collection with the first n elements removed.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.Drop(2)
 //
-// output: [3,4,5,6]
+// output:
+//
+//	[3,4,5,6]
 func (c *Collection[T]) Drop(n int) *Collection[T] {
 	if n <= 0 {
 		return c
@@ -162,12 +176,14 @@ func (c *Collection[T]) Drop(n int) *Collection[T] {
 
 // DropRight returns a collection with the last n elements removed.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.DropRight(2)
 //
-// output: [1,2,3,4]
+// output:
+//
+//	[1,2,3,4]
 func (c *Collection[T]) DropRight(n int) *Collection[T] {
 	if n <= 0 {
 		return c
@@ -182,14 +198,16 @@ func (c *Collection[T]) DropRight(n int) *Collection[T] {
 // Filter takes a filtering function as input and returns a new collection
 // containing all the elements that match the filter.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.Filter(func(i int) bool {
 //	  return i%2==0
 //	})
 //
-// output: [2,4,6]
+// output:
+//
+//	[2,4,6]
 func (c *Collection[T]) Filter(f func(T) bool) *Collection[T] {
 	return &Collection[T]{
 		utils.Filter(c.elements, f),
@@ -199,14 +217,16 @@ func (c *Collection[T]) Filter(f func(T) bool) *Collection[T] {
 // FilterNot takes a filtering function as input and returns a new collection
 // containing all the elements that do not match the filter.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.FilterNot(func(i int) bool {
 //	  return i%2==0
 //	})
 //
-// output: [1,3,5]
+// output:
+//
+//	[1,3,5]
 func (c *Collection[T]) FilterNot(f func(T) bool) *Collection[T] {
 	return &Collection[T]{
 		utils.FilterNot(c.elements, f),
@@ -217,14 +237,16 @@ func (c *Collection[T]) FilterNot(f func(T) bool) *Collection[T] {
 // the first one contains the elements that match the partitioning condition,
 // the second one contains the rest of the elements.
 //
-// example:
+// example usage:
 //
 //	c := NewCollection([]int{1,2,3,4,5,6})
 //	c.Partition(func(i int) bool {
 //	  return i%2==0
 //	})
 //
-// output: [2,4,6], [1,3,5]
+// output:
+//
+//	[2,4,6], [1,3,5]
 func (c *Collection[T]) Partition(f func(T) bool) (*Collection[T], *Collection[T]) {
 	left, right := utils.Partition(c.elements, f)
 	return &Collection[T]{left}, &Collection[T]{right}
@@ -233,7 +255,7 @@ func (c *Collection[T]) Partition(f func(T) bool) (*Collection[T], *Collection[T
 // ForEach takes a function as input and applies the function
 // to each element in the collection.
 //
-// example:
+// example usage:
 //
 //	c.ForEach(func(t Task) {
 //	  t.run()
