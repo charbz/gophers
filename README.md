@@ -1,4 +1,4 @@
-# Goutils - functional utilities for Collections
+# Gophers - functional utilities for generic collections
 
 A lightweight Go library providing functional programming utilities for working with generic collections. This library offers a clean, type-safe API for common collection operations inspired by functional programming patterns.
 
@@ -21,7 +21,6 @@ go get github.com/charbz/gophers
 ```go
 import (
   "github.com/charbz/gophers/pkg/collections"
-  "github.com/charbz/gophers/pkg/utils"
 )
 
 // Create a new collection
@@ -29,9 +28,13 @@ numbers := collections.NewCollection([]int{1, 2, 3, 4, 5})
 
 // Basic operations
 numbers.Head() // 1
+
 numbers.Last() // 5
+
 numbers.Take(3) // [1,2,3]
+
 numbers.TakeRight(2) // [4,5]
+
 numbers.Drop(2) // [3,4,5]
 
 numbers.Filter(func(n int) bool {
@@ -71,6 +74,14 @@ numbers.FilterNot(func(n int) bool {
 ### Map, Reduce, Partition
 
 ```go
+import (
+  "github.com/charbz/gophers/pkg/collections"
+  "github.com/charbz/gophers/pkg/utils"
+)
+
+// Create a new collection
+numbers := collections.NewCollection([]int{1, 2, 3, 4, 5})
+
 utils.Map(numbers.ToSlice(), func(n int) int {
   return n * 2
 }) // [2,4,6,8,10]
