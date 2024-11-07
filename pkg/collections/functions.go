@@ -2,12 +2,13 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// functions.go defines all the package functions that take a collection of type T as input
-// and return some generic type K as output. Such as Map and Reduce.
+// functions.go defines all the package functions that operate on a Collection but could not
+// be defined as methods on the Collection struct due to the limitation of Generics in Go.
 //
-// Unfortunately Go does not allow Generic type parameters to be defined directly on methods,
-// otherwise all the code in here would be moved to methods.go. therefore all operations of
-// the form f(T) -> K must be declared here and used as follows:
+// Unfortunately Go does not allow Generic type parameters to be defined directly on struct methods,
+// Given that the Collection struct is bound to 1 generic argument [T any] representing the underlying type,
+// operations that require a specific constraint, such as [T comparable], and operations that map into a
+// different type altogether such as f(T) -> K must be defined as functions. and used as follows:
 //
 //	Map(collection, func(t T) K {
 //	     ...
@@ -33,7 +34,7 @@ import (
 // output:
 //
 //	[5,3,6]
-func Map[T any, K any](s *Collection[T], f func(T) K) *Collection[K] {
+func Map[T, K any](s *Collection[T], f func(T) K) *Collection[K] {
 	return &Collection[K]{
 		utils.Map(s.elements, f),
 	}
@@ -54,6 +55,23 @@ func Map[T any, K any](s *Collection[T], f func(T) K) *Collection[K] {
 // output:
 //
 //	21
-func Reduce[T any, K any](s *Collection[T], f func(K, T) K, init K) K {
+func Reduce[T, K any](s *Collection[T], f func(K, T) K, init K) K {
 	return utils.Reduce(s.elements, f, init)
+}
+
+// Distinct takes a collection of type T comparable, and returns a new collection
+// containing all the unique elements from the original collection.
+//
+// example:
+//
+//	c := NewCollection([]int{1,2,2,2,3,3})
+//	Distinct(c)
+//
+// output:
+//
+//	[1,2,3]
+func Distinct[T comparable](s *Collection[T]) *Collection[T] {
+	return &Collection[T]{
+		utils.Distinct(s.elements),
+	}
 }

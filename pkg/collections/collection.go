@@ -28,11 +28,11 @@ type Collection[T any] struct {
 // example:
 //
 //	c := NewCollection([]int{1,2,3})
-func NewCollection[T any](s ...[]T) Collection[T] {
+func NewCollection[T any](s ...[]T) *Collection[T] {
 	if len(s) == 0 {
-		return Collection[T]{}
+		return &Collection[T]{}
 	}
-	return Collection[T]{elements: slices.Concat(s...)}
+	return &Collection[T]{elements: slices.Concat(s...)}
 }
 
 // String implements the Stringer interface to enable fmt to print the underlying slice.

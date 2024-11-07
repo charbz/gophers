@@ -266,3 +266,23 @@ func (c *Collection[T]) ForEach(f func(T)) *Collection[T] {
 	}
 	return c
 }
+
+// Reverse returns a new collection containing all elements in reverse
+//
+// example usage:
+//
+//	c := NewCollection([]int{1,2,3,4,5,6})
+//	c.Reverse
+//
+// output:
+//
+//	[6,5,4,3,2,1]
+func (c *Collection[T]) Reverse() *Collection[T] {
+	elements := make([]T, 0, len(c.elements))
+	for i := len(c.elements) - 1; i >= 0; i-- {
+		elements = append(elements, c.elements[i])
+	}
+	return &Collection[T]{
+		elements,
+	}
+}
