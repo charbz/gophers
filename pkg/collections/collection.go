@@ -1,4 +1,10 @@
-// Package collections provides utilities for working with generic collections of elements
+// Copyright (c) 2024 Gophers. All rights reserved.
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
+// Package collections implements support for a generic Collection.
+// A collection wraps an underlying Go slice and provides convenience methods
+// and synthatic sugar on top of it.
 package collections
 
 import (
@@ -6,18 +12,22 @@ import (
 	"slices"
 )
 
-type Sliceable interface {
-	ToSlice() int
-}
+// NOTE: this file only contains basic definitions.
+//   - collection methods can be found in methods.go
+//   - package functions can be found in functions.go
+//
+// it's important to keep this file lightweight
 
-// Collection represents a generic collection of elements of type T
 type Collection[T any] struct {
 	elements []T
 }
 
-// NewCollection creates a new Collection from zero or more slices of type T.
-// If no slices are provided, returns an empty Collection.
-// If multiple slices are provided, they are concatenated.
+// NewCollection is a constructor for collections.
+// It can be initialized with any number slices.
+//
+// example:
+//
+//	c := NewCollection([]int{1,2,3})
 func NewCollection[T any](s ...[]T) Collection[T] {
 	if len(s) == 0 {
 		return Collection[T]{}
@@ -25,119 +35,37 @@ func NewCollection[T any](s ...[]T) Collection[T] {
 	return Collection[T]{elements: slices.Concat(s...)}
 }
 
-// zero returns an empty slice of type T.
-func (c *Collection[T]) zero() []T {
-	var z []T
-	return z
+// String implements the Stringer interface to enable fmt to print the underlying slice.
+func (c *Collection[T]) String() string {
+	return fmt.Sprintf("%v", c.elements)
 }
 
-// zeroT returns the zero value for type T.
+// zero returns the zero value of the underlying slice
+func (c *Collection[T]) zero() *Collection[T] {
+	var z Collection[T]
+	return &z
+}
+
+// zeroT returns the zero value of the underlying slice's type.
 func (c *Collection[T]) zeroT() T {
 	var z T
 	return z
 }
 
-// At returns the element at the specified index in the Collection.
-func (c *Collection[T]) At(index int) T {
-	return c.elements[index]
+// collectionError type definition
+type collectionError struct {
+	code int
+	msg  string
 }
 
-// ToSlice returns the underlying slice containing all elements in the Collection.
-func (c *Collection[T]) ToSlice() []T {
-	return c.elements
+// Error implements the error interface
+func (e *collectionError) Error() string {
+	return fmt.Sprintf("error %d: %s", e.code, e.msg)
 }
 
-// IsEmpty returns true if the Collection contains no elements.
-func (c *Collection[T]) IsEmpty() bool {
-	return len(c.elements) == 0
-}
-
-// NonEmpty returns true if the Collection contains at least one element.
-func (c *Collection[T]) NonEmpty() bool {
-	return len(c.elements) > 0
-}
-
-// Length returns the number of elements in the Collection.
-func (c *Collection[T]) Length() int {
-	return len(c.elements)
-}
-
-// Head returns the first element in the Collection and nil error if non-empty,
-// or zero value and error if empty.
-func (c *Collection[T]) Head() (T, error) {
-	if c.IsEmpty() {
-		return c.zeroT(), fmt.Errorf("head of empty list")
+// error values used throughout this package
+var (
+	emptyCollectionError = &collectionError{
+		code: 100, msg: "invalid operation on an empty collection",
 	}
-	return c.elements[0], nil
-}
-
-// Last returns the final element in the Collection and nil error if non-empty,
-// or zero value and error if empty.
-func (c *Collection[T]) Last() (T, error) {
-	if c.IsEmpty() {
-		return c.zeroT(), fmt.Errorf("last of empty list")
-	}
-	return c.elements[len(c.elements)-1], nil
-}
-
-// Tail returns a slice containing all elements except the first.
-// If the Collection is empty, returns an empty slice.
-func (c *Collection[T]) Tail() []T {
-	if c.IsEmpty() {
-		return c.elements
-	}
-	return c.elements[1:]
-}
-
-// Init returns a slice containing all elements except the last.
-// If the Collection is empty, returns an empty slice.
-func (c *Collection[T]) Init() []T {
-	if c.IsEmpty() {
-		return c.elements
-	}
-	return c.elements[0 : len(c.elements)-1]
-}
-
-// Take returns a slice containing the first q elements.
-// If q is negative or zero, returns an empty slice.
-// If q exceeds the Collection length, returns all elements.
-func (c *Collection[T]) Take(q int) []T {
-	if q <= 0 {
-		return c.zero()
-	}
-	return c.elements[0:min(q, c.Length())]
-}
-
-// TakeRight returns a slice containing the last q elements.
-// If q is negative or zero, returns an empty slice.
-// If q exceeds the Collection length, returns all elements.
-func (c *Collection[T]) TakeRight(q int) []T {
-	if q <= 0 {
-		return c.zero()
-	}
-	return c.elements[max(c.Length()-q, 0):]
-}
-
-// Drop returns a slice with the first q elements removed.
-// If q is negative or zero, returns all elements.
-// If q exceeds the Collection length, returns an empty slice.
-func (c *Collection[T]) Drop(q int) []T {
-	if q <= 0 {
-		return c.elements
-	} else if q >= c.Length() {
-		return c.zero()
-	}
-	return c.elements[q:]
-}
-
-// DropRight returns a slice with the last q elements removed.
-// If q is negative or zero, returns all elements.
-// If q exceeds the Collection length, returns an empty slice.
-func (c *Collection[T]) DropRight(q int) []T {
-	if q <= 0 {
-		return c.elements
-	} else if q >= c.Length() {
-		return c.zero()
-	}
-	return c.elements[0 : c.Length()-q]
-}
+)
