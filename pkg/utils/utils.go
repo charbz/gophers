@@ -12,6 +12,19 @@ import (
 	"slices"
 )
 
+func Distinct[S ~[]T, T comparable](s S) S {
+	m := make(map[T]interface{})
+	r := make([]T, 0)
+	for v := range slices.Values(s) {
+		_, ok := m[v]
+		if !ok {
+			r = append(r, v)
+			m[v] = true
+		}
+	}
+	return r
+}
+
 func Filter[S ~[]T, T any](s S, f func(T) bool) S {
 	r := make([]T, 0, len(s))
 	for v := range slices.Values(s) {
@@ -40,14 +53,6 @@ func Map[T any, K any](s []T, f func(T) K) []K {
 	return s2
 }
 
-func Reduce[S ~[]T, T any, K any](s S, f func(K, T) K, init K) K {
-	acc := init
-	for v := range slices.Values(s) {
-		acc = f(acc, v)
-	}
-	return acc
-}
-
 func Partition[S ~[]T, T any](s S, f func(T) bool) (S, S) {
 	match := make([]T, 0)
 	noMatch := make([]T, 0)
@@ -61,15 +66,10 @@ func Partition[S ~[]T, T any](s S, f func(T) bool) (S, S) {
 	return match, noMatch
 }
 
-func Distinct[S ~[]T, T comparable](s S) S {
-	m := make(map[T]interface{})
-	r := make([]T, 0)
+func Reduce[S ~[]T, T any, K any](s S, f func(K, T) K, init K) K {
+	acc := init
 	for v := range slices.Values(s) {
-		_, ok := m[v]
-		if !ok {
-			r = append(r, v)
-			m[v] = true
-		}
+		acc = f(acc, v)
 	}
-	return r
+	return acc
 }

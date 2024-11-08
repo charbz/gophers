@@ -21,6 +21,23 @@ import (
 	"github.com/charbz/gophers/pkg/utils"
 )
 
+// Distinct takes a collection of type T comparable, and returns a new collection
+// containing all the unique elements from the original collection.
+//
+// example:
+//
+//	c := NewCollection([]int{1,2,2,2,3,3})
+//	Distinct(c)
+//
+// output:
+//
+//	[1,2,3]
+func Distinct[T comparable](s *Collection[T]) *Collection[T] {
+	return &Collection[T]{
+		utils.Distinct(s.elements),
+	}
+}
+
 // Map takes a collection of type T and a mapping function func(T) K,
 // applies the mapping function to each element and returns a collection of type K.
 //
@@ -57,21 +74,4 @@ func Map[T, K any](s *Collection[T], f func(T) K) *Collection[K] {
 //	21
 func Reduce[T, K any](s *Collection[T], f func(K, T) K, init K) K {
 	return utils.Reduce(s.elements, f, init)
-}
-
-// Distinct takes a collection of type T comparable, and returns a new collection
-// containing all the unique elements from the original collection.
-//
-// example:
-//
-//	c := NewCollection([]int{1,2,2,2,3,3})
-//	Distinct(c)
-//
-// output:
-//
-//	[1,2,3]
-func Distinct[T comparable](s *Collection[T]) *Collection[T] {
-	return &Collection[T]{
-		utils.Distinct(s.elements),
-	}
 }

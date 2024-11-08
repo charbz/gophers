@@ -21,138 +21,6 @@ func (c *Collection[T]) At(index int) T {
 	return c.elements[index]
 }
 
-// ToSlice returns the underlying slice.
-func (c *Collection[T]) ToSlice() []T {
-	return c.elements
-}
-
-// IsEmpty returns true if the Collection contains 0 elements.
-func (c *Collection[T]) IsEmpty() bool {
-	return len(c.elements) == 0
-}
-
-// NonEmpty returns true if the Collection contains at least 1 element.
-func (c *Collection[T]) NonEmpty() bool {
-	return len(c.elements) > 0
-}
-
-// Length returns the number of elements in the Collection.
-func (c *Collection[T]) Length() int {
-	return len(c.elements)
-}
-
-// Head returns the first element in a Collection and a nil error.
-// If the collection is empty, it returns the zero value and an error.
-//
-// example usage:
-//
-//	c := NewCollection([]string{"A","B","C"})
-//	c.Head()
-//
-// output:
-//
-//	"A", nil
-func (c *Collection[T]) Head() (T, error) {
-	if c.IsEmpty() {
-		return c.zeroT(), emptyCollectionError
-	}
-	return c.elements[0], nil
-}
-
-// Last returns the last element in the Collection and a nil error.
-// If the collection is empty, it returns the zero value and an error.
-//
-// example usage:
-//
-//	c := NewCollection([]string{"A","B","C"})
-//	c.Last()
-//
-// output:
-//
-//	"C", nil
-func (c *Collection[T]) Last() (T, error) {
-	if c.IsEmpty() {
-		return c.zeroT(), emptyCollectionError
-	}
-	return c.elements[len(c.elements)-1], nil
-}
-
-// Tail returns a new collection containing all elements excluding the first one.
-//
-// example usage:
-//
-//	c := NewCollection([]int{1,2,3,4,5,6})
-//	c.Tail()
-//
-// output:
-//
-//	[2,3,4,5,6]
-func (c *Collection[T]) Tail() *Collection[T] {
-	if c.IsEmpty() {
-		return c
-	}
-	return &Collection[T]{
-		c.elements[1:],
-	}
-}
-
-// Init returns a collection containing all elements excluding the last one.
-//
-// example usage:
-//
-//	c := NewCollection([]int{1,2,3,4,5,6})
-//	c.Tail()
-//
-// output:
-//
-//	[1,2,3,4,5]
-func (c *Collection[T]) Init() *Collection[T] {
-	if c.IsEmpty() {
-		return c
-	}
-	return &Collection[T]{
-		c.elements[0 : len(c.elements)-1],
-	}
-}
-
-// Take returns a new collection containing the first n elements.
-//
-// example usage:
-//
-//	[c := NewCollection([]int{1,2,3,4,5,6})
-//	c.Take(3)
-//
-// output:
-//
-//	[1,2,3]
-func (c *Collection[T]) Take(n int) *Collection[T] {
-	if n <= 0 {
-		return c.zero()
-	}
-	return &Collection[T]{
-		c.elements[0:min(n, c.Length())],
-	}
-}
-
-// TakeRight returns a new collection containing the last n elements.
-//
-// example usage:
-//
-//	c := NewCollection([]int{1,2,3,4,5,6})
-//	c.TakeRight(3)
-//
-// output:
-//
-//	[4,5,6]
-func (c *Collection[T]) TakeRight(n int) *Collection[T] {
-	if n <= 0 {
-		return c.zero()
-	}
-	return &Collection[T]{
-		c.elements[max(c.Length()-n, 0):],
-	}
-}
-
 // Drop returns a new collection with the first n elements removed.
 //
 // example usage:
@@ -233,6 +101,91 @@ func (c *Collection[T]) FilterNot(f func(T) bool) *Collection[T] {
 	}
 }
 
+// ForEach takes a function as input and applies the function
+// to each element in the collection.
+//
+// example usage:
+//
+//	c.ForEach(func(t Task) {
+//	  t.run()
+//	})
+func (c *Collection[T]) ForEach(f func(T)) *Collection[T] {
+	for v := range c.Values() {
+		f(v)
+	}
+	return c
+}
+
+// Head returns the first element in a Collection and a nil error.
+// If the collection is empty, it returns the zero value and an error.
+//
+// example usage:
+//
+//	c := NewCollection([]string{"A","B","C"})
+//	c.Head()
+//
+// output:
+//
+//	"A", nil
+func (c *Collection[T]) Head() (T, error) {
+	if c.IsEmpty() {
+		return c.zeroT(), emptyCollectionError
+	}
+	return c.elements[0], nil
+}
+
+// Init returns a collection containing all elements excluding the last one.
+//
+// example usage:
+//
+//	c := NewCollection([]int{1,2,3,4,5,6})
+//	c.Tail()
+//
+// output:
+//
+//	[1,2,3,4,5]
+func (c *Collection[T]) Init() *Collection[T] {
+	if c.IsEmpty() {
+		return c
+	}
+	return &Collection[T]{
+		c.elements[0 : len(c.elements)-1],
+	}
+}
+
+// IsEmpty returns true if the Collection contains 0 elements.
+func (c *Collection[T]) IsEmpty() bool {
+	return len(c.elements) == 0
+}
+
+// Last returns the last element in the Collection and a nil error.
+// If the collection is empty, it returns the zero value and an error.
+//
+// example usage:
+//
+//	c := NewCollection([]string{"A","B","C"})
+//	c.Last()
+//
+// output:
+//
+//	"C", nil
+func (c *Collection[T]) Last() (T, error) {
+	if c.IsEmpty() {
+		return c.zeroT(), emptyCollectionError
+	}
+	return c.elements[len(c.elements)-1], nil
+}
+
+// Length returns the number of elements in the Collection.
+func (c *Collection[T]) Length() int {
+	return len(c.elements)
+}
+
+// NonEmpty returns true if the Collection contains at least 1 element.
+func (c *Collection[T]) NonEmpty() bool {
+	return len(c.elements) > 0
+}
+
 // Partition takes a partitioning function as input and returns two collections,
 // the first one contains the elements that match the partitioning condition,
 // the second one contains the rest of the elements.
@@ -250,21 +203,6 @@ func (c *Collection[T]) FilterNot(f func(T) bool) *Collection[T] {
 func (c *Collection[T]) Partition(f func(T) bool) (*Collection[T], *Collection[T]) {
 	left, right := utils.Partition(c.elements, f)
 	return &Collection[T]{left}, &Collection[T]{right}
-}
-
-// ForEach takes a function as input and applies the function
-// to each element in the collection.
-//
-// example usage:
-//
-//	c.ForEach(func(t Task) {
-//	  t.run()
-//	})
-func (c *Collection[T]) ForEach(f func(T)) *Collection[T] {
-	for v := range c.Values() {
-		f(v)
-	}
-	return c
 }
 
 // Reverse returns a new collection containing all elements in reverse
@@ -285,4 +223,66 @@ func (c *Collection[T]) Reverse() *Collection[T] {
 	return &Collection[T]{
 		elements,
 	}
+}
+
+// Take returns a new collection containing the first n elements.
+//
+// example usage:
+//
+//	[c := NewCollection([]int{1,2,3,4,5,6})
+//	c.Take(3)
+//
+// output:
+//
+//	[1,2,3]
+func (c *Collection[T]) Take(n int) *Collection[T] {
+	if n <= 0 {
+		return c.zero()
+	}
+	return &Collection[T]{
+		c.elements[0:min(n, c.Length())],
+	}
+}
+
+// TakeRight returns a new collection containing the last n elements.
+//
+// example usage:
+//
+//	c := NewCollection([]int{1,2,3,4,5,6})
+//	c.TakeRight(3)
+//
+// output:
+//
+//	[4,5,6]
+func (c *Collection[T]) TakeRight(n int) *Collection[T] {
+	if n <= 0 {
+		return c.zero()
+	}
+	return &Collection[T]{
+		c.elements[max(c.Length()-n, 0):],
+	}
+}
+
+// Tail returns a new collection containing all elements excluding the first one.
+//
+// example usage:
+//
+//	c := NewCollection([]int{1,2,3,4,5,6})
+//	c.Tail()
+//
+// output:
+//
+//	[2,3,4,5,6]
+func (c *Collection[T]) Tail() *Collection[T] {
+	if c.IsEmpty() {
+		return c
+	}
+	return &Collection[T]{
+		c.elements[1:],
+	}
+}
+
+// ToSlice returns the underlying slice.
+func (c *Collection[T]) ToSlice() []T {
+	return c.elements
 }
