@@ -21,6 +21,16 @@ import (
 	"github.com/charbz/gophers/pkg/utils"
 )
 
+// Contains returns True if the collection contains the given value
+func Contains[T comparable](s *Collection[T], value T) bool {
+	for v := range s.Values() {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
 // Distinct takes a collection of type T comparable, and returns a new collection
 // containing all the unique elements from the original collection.
 //

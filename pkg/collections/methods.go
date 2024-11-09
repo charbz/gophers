@@ -21,6 +21,24 @@ func (c *Collection[T]) At(index int) T {
 	return c.elements[index]
 }
 
+// Contains tests whether a predicate holds for at least
+// one element of this sequence.
+//
+// example:
+//
+//	c := NewCollection([]string{"Alice", "bilLy", "JOel"})
+//	c.Contains(func (i string) bool {
+//	  return strings.ToLower(i) == "joel"
+//	})
+//
+// output:
+//
+//	true
+func (c *Collection[T]) Contains(f func(T) bool) bool {
+	i, _ := utils.Find(c.elements, f)
+	return i > -1
+}
+
 // Drop returns a new collection with the first n elements removed.
 //
 // example usage:
@@ -35,7 +53,7 @@ func (c *Collection[T]) Drop(n int) *Collection[T] {
 	if n <= 0 {
 		return c
 	} else if n >= c.Length() {
-		return c.zero()
+		return new(Collection[T])
 	}
 	return &Collection[T]{
 		c.elements[n:],
@@ -56,11 +74,16 @@ func (c *Collection[T]) DropRight(n int) *Collection[T] {
 	if n <= 0 {
 		return c
 	} else if n >= c.Length() {
-		return c.zero()
+		return new(Collection[T])
 	}
 	return &Collection[T]{
 		c.elements[0 : c.Length()-n],
 	}
+}
+
+// Exists is an alias for Contains
+func (c *Collection[T]) Exists(f func(T) bool) bool {
+	return c.Contains(f)
 }
 
 // Filter takes a filtering function as input and returns a new collection
@@ -101,6 +124,44 @@ func (c *Collection[T]) FilterNot(f func(T) bool) *Collection[T] {
 	}
 }
 
+// Find finds the first element of the sequence satisfying a predicate, if any.
+//
+// example usage:
+//
+//	c := NewCollection([]int{1,2,3,4,5,6})
+//	c.Find(f(i int) bool {
+//	  return (i + 3) > 5
+//	})
+//
+// output
+//
+//	3
+func (c *Collection[T]) Find(f func(T) bool) (T, error) {
+	i, v := utils.Find(c.elements, f)
+	if i > -1 {
+		return v, nil
+	}
+	return v, notFoundError
+}
+
+// FindWhere finds the index of the first element of the sequence satisfying a predicate.
+// If the element is not found, -1 is returned
+//
+// example usage:
+//
+//	c := NewCollection([]int{1,2,3,4,5,6})
+//	c.FindWhere(f(i int) int {
+//	  return (i + 3) > 5
+//	})
+//
+// output
+//
+//	2
+func (c *Collection[T]) FindWhere(f func(T) bool) int {
+	i, _ := utils.Find(c.elements, f)
+	return i
+}
+
 // ForEach takes a function as input and applies the function
 // to each element in the collection.
 //
@@ -129,7 +190,7 @@ func (c *Collection[T]) ForEach(f func(T)) *Collection[T] {
 //	"A", nil
 func (c *Collection[T]) Head() (T, error) {
 	if c.IsEmpty() {
-		return c.zeroT(), emptyCollectionError
+		return *new(T), emptyCollectionError
 	}
 	return c.elements[0], nil
 }
@@ -171,7 +232,7 @@ func (c *Collection[T]) IsEmpty() bool {
 //	"C", nil
 func (c *Collection[T]) Last() (T, error) {
 	if c.IsEmpty() {
-		return c.zeroT(), emptyCollectionError
+		return *new(T), emptyCollectionError
 	}
 	return c.elements[len(c.elements)-1], nil
 }
@@ -237,7 +298,7 @@ func (c *Collection[T]) Reverse() *Collection[T] {
 //	[1,2,3]
 func (c *Collection[T]) Take(n int) *Collection[T] {
 	if n <= 0 {
-		return c.zero()
+		return new(Collection[T])
 	}
 	return &Collection[T]{
 		c.elements[0:min(n, c.Length())],
@@ -256,7 +317,7 @@ func (c *Collection[T]) Take(n int) *Collection[T] {
 //	[4,5,6]
 func (c *Collection[T]) TakeRight(n int) *Collection[T] {
 	if n <= 0 {
-		return c.zero()
+		return new(Collection[T])
 	}
 	return &Collection[T]{
 		c.elements[max(c.Length()-n, 0):],
