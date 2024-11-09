@@ -2,11 +2,10 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// wrappers.go contains collection methods that wrap functions
-// provided by the Go slices library. This file is just synthatic sugar to
-// enable function chaining i.e.:
+// sugar.go this file just contains synthatic sugar for the Go slices package,
+// the methods defined here enable function chaining i.e.:
 //
-//    collection.Reverse().Concat(c2).Sort()
+//   collection.Reverse().Concat(c2).All()
 
 package collections
 
@@ -43,7 +42,7 @@ func (c *Collection[T]) Concat(collections ...Collection[T]) *Collection[T] {
 	return &Collection[T]{e}
 }
 
-// DistinctFunc takes a higher order "equality" function as an argument
+// Distinct takes a higher order "equality" function as an argument
 // and returns a new collection containing all the unique elements
 // from the original collection.
 //
@@ -60,7 +59,7 @@ func (c *Collection[T]) Concat(collections ...Collection[T]) *Collection[T] {
 //
 // If you prefer not to pass an equality function check out
 // Distinct() in functions.go
-func (c *Collection[T]) DistinctFunc(f func(T, T) bool) *Collection[T] {
+func (c *Collection[T]) Distinct(f func(T, T) bool) *Collection[T] {
 	return &Collection[T]{
 		slices.CompactFunc(c.elements, f),
 	}

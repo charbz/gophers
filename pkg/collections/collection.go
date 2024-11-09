@@ -35,21 +35,10 @@ func NewCollection[T any](s ...[]T) *Collection[T] {
 	return &Collection[T]{elements: slices.Concat(s...)}
 }
 
-// String implements the Stringer interface to enable fmt to print the underlying slice.
+// String implements the Stringer interface to
+// enable fmt to print the underlying slice.
 func (c *Collection[T]) String() string {
 	return fmt.Sprintf("%v", c.elements)
-}
-
-// zero returns the zero value of the underlying slice
-func (c *Collection[T]) zero() *Collection[T] {
-	var z Collection[T]
-	return &z
-}
-
-// zeroT returns the zero value of the underlying slice's type.
-func (c *Collection[T]) zeroT() T {
-	var z T
-	return z
 }
 
 // collectionError type definition
@@ -67,5 +56,8 @@ func (e *collectionError) Error() string {
 var (
 	emptyCollectionError = &collectionError{
 		code: 100, msg: "invalid operation on an empty collection",
+	}
+	notFoundError = &collectionError{
+		code: 101, msg: "value not found",
 	}
 )
