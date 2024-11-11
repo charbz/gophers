@@ -1,4 +1,4 @@
-package collections
+package sequence
 
 import (
 	"testing"
@@ -6,7 +6,71 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCollection_At(t *testing.T) {
+func TestConcat(t *testing.T) {
+	tests := []struct {
+		name     string
+		base     []int
+		toConcat [][]int
+		want     []int
+	}{
+		{
+			name:     "single Sequence concat",
+			base:     []int{1, 2},
+			toConcat: [][]int{{3, 4}},
+			want:     []int{1, 2, 3, 4},
+		},
+		{
+			name:     "multiple Sequences concat",
+			base:     []int{1, 2},
+			toConcat: [][]int{{3, 4}, {5, 6}},
+			want:     []int{1, 2, 3, 4, 5, 6},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.base)
+			var Sequences []Sequence[int]
+			for _, slice := range tt.toConcat {
+				Sequences = append(Sequences, *NewSequence(slice))
+			}
+
+			result := c.Concat(Sequences...)
+			assert.Equal(t, tt.want, result.elements)
+		})
+	}
+}
+
+func TestDistinct(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []int
+		want  []int
+	}{
+		{
+			name:  "no duplicates",
+			input: []int{1, 2, 3},
+			want:  []int{1, 2, 3},
+		},
+		{
+			name:  "with duplicates",
+			input: []int{1, 2, 2, 3, 3, 3},
+			want:  []int{1, 2, 3},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.input)
+			result := c.Distinct(func(a, b int) bool {
+				return a == b
+			})
+			assert.Equal(t, tt.want, result.elements)
+		})
+	}
+}
+
+func TestSequence_At(t *testing.T) {
 	tests := []struct {
 		name    string
 		slice   []int
@@ -51,7 +115,7 @@ func TestCollection_At(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 
 			if tt.wantErr {
 				assert.Panics(t, func() { c.At(tt.index) })
@@ -63,7 +127,7 @@ func TestCollection_At(t *testing.T) {
 	}
 }
 
-func TestCollection_Contains(t *testing.T) {
+func TestSequence_Contains(t *testing.T) {
 	tests := []struct {
 		name      string
 		slice     []int
@@ -86,14 +150,14 @@ func TestCollection_Contains(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got := c.Contains(tt.predicate)
 			assert.Equal(t, tt.want, got)
 		})
 	}
 }
 
-func TestCollection_Drop(t *testing.T) {
+func TestSequence_Drop(t *testing.T) {
 	tests := []struct {
 		name  string
 		slice []int
@@ -128,14 +192,14 @@ func TestCollection_Drop(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got := c.Drop(tt.n)
 			assert.Equal(t, tt.want, got.ToSlice())
 		})
 	}
 }
 
-func TestCollection_Filter(t *testing.T) {
+func TestSequence_Filter(t *testing.T) {
 	tests := []struct {
 		name   string
 		slice  []int
@@ -152,7 +216,7 @@ func TestCollection_Filter(t *testing.T) {
 			name:   "filter nothing",
 			slice:  []int{1, 2, 3},
 			filter: func(i int) bool { return false },
-			want:   []int{},
+			want:   nil,
 		},
 		{
 			name:   "filter everything",
@@ -164,14 +228,14 @@ func TestCollection_Filter(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got := c.Filter(tt.filter)
 			assert.Equal(t, tt.want, got.ToSlice())
 		})
 	}
 }
 
-func TestCollection_DropRight(t *testing.T) {
+func TestSequence_DropRight(t *testing.T) {
 	tests := []struct {
 		name  string
 		slice []int
@@ -206,14 +270,14 @@ func TestCollection_DropRight(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got := c.DropRight(tt.n)
 			assert.Equal(t, tt.want, got.ToSlice())
 		})
 	}
 }
 
-func TestCollection_FilterNot(t *testing.T) {
+func TestSequence_FilterNot(t *testing.T) {
 	tests := []struct {
 		name   string
 		slice  []int
@@ -236,20 +300,20 @@ func TestCollection_FilterNot(t *testing.T) {
 			name:   "filter not everything",
 			slice:  []int{1, 2, 3},
 			filter: func(i int) bool { return true },
-			want:   []int{},
+			want:   nil,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got := c.FilterNot(tt.filter)
 			assert.Equal(t, tt.want, got.ToSlice())
 		})
 	}
 }
 
-func TestCollection_Find(t *testing.T) {
+func TestSequence_Find(t *testing.T) {
 	tests := []struct {
 		name      string
 		slice     []int
@@ -282,7 +346,7 @@ func TestCollection_Find(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got, err := c.Find(tt.predicate)
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -294,7 +358,7 @@ func TestCollection_Find(t *testing.T) {
 	}
 }
 
-func TestCollection_FindWhere(t *testing.T) {
+func TestSequence_FindWhere(t *testing.T) {
 	tests := []struct {
 		name      string
 		slice     []int
@@ -323,14 +387,14 @@ func TestCollection_FindWhere(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got := c.FindWhere(tt.predicate)
 			assert.Equal(t, tt.want, got)
 		})
 	}
 }
 
-func TestCollection_ForEach(t *testing.T) {
+func TestSequence_ForEach(t *testing.T) {
 	tests := []struct {
 		name  string
 		slice []int
@@ -350,7 +414,7 @@ func TestCollection_ForEach(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			sum := 0
 			c.ForEach(func(i int) {
 				sum += i
@@ -360,7 +424,7 @@ func TestCollection_ForEach(t *testing.T) {
 	}
 }
 
-func TestCollection_Head(t *testing.T) {
+func TestSequence_Head(t *testing.T) {
 	tests := []struct {
 		name    string
 		slice   []int
@@ -383,7 +447,7 @@ func TestCollection_Head(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := NewCollection(tt.slice)
+			c := NewSequence(tt.slice)
 			got, err := c.Head()
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -393,17 +457,4 @@ func TestCollection_Head(t *testing.T) {
 			}
 		})
 	}
-}
-
-// Helper function to compare slices
-func sliceEqual[T comparable](a, b []T) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }
