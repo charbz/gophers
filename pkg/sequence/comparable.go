@@ -41,6 +41,11 @@ func (c *ComparableSequence[T]) Exists(v T) bool {
 	return c.Contains(v)
 }
 
+// Equals returns true if the two sequences are equal.
+func (c *ComparableSequence[T]) Equals(c2 *ComparableSequence[T]) bool {
+	return slices.Equal(c.elements, c2.elements)
+}
+
 // IndexOf returns the index of the first occurrence of the specified element in this sequence,
 // or -1 if this sequence does not contain the element.
 func (c *ComparableSequence[T]) IndexOf(v T) int {

@@ -22,7 +22,6 @@ type Sequence[T any] struct {
 	elements []T
 }
 
-// NewSequence is a constructor for a generic sequence.
 func NewSequence[T any](s ...[]T) *Sequence[T] {
 	seq := new(Sequence[T])
 	if len(s) == 0 {
@@ -31,32 +30,65 @@ func NewSequence[T any](s ...[]T) *Sequence[T] {
 	return &Sequence[T]{elements: slices.Concat(s...)}
 }
 
+// Implementing the Collection interface.
+
+// All returns an iterator over all elements of the sequence.
+func (c *Sequence[T]) All() iter.Seq2[int, T] {
+	return slices.All(c.elements)
+}
+
 // At returns the element at the given index.
 func (c *Sequence[T]) At(index int) T {
 	return c.elements[index]
 }
 
-// Append adds a value to the end of the sequence.
+// Append appends an element to the sequence.
 func (c *Sequence[T]) Append(v T) {
 	c.elements = append(c.elements, v)
 }
 
-// All returns an (index, value) iterator for the underlying slice.
-func (c *Sequence[T]) All() iter.Seq2[int, T] {
-	return slices.All(c.elements)
-}
-
-// Backward returns an (index, value) backwards iterator
-// for the underlying slice.
+// Backward returns an iterator over all elements of the sequence in reverse order.
 func (c *Sequence[T]) Backward() iter.Seq2[int, T] {
 	return slices.Backward(c.elements)
 }
+
+// Length returns the number of elements in the sequence.
+func (c *Sequence[T]) Length() int {
+	return len(c.elements)
+}
+
+// New is a constructor for a generic sequence.
+func (c *Sequence[T]) New(s ...[]T) collection.Collection[T] {
+	return NewSequence(s...)
+}
+
+// Slice returns a new sequence containing the elements from the start index to the end index.
+func (c *Sequence[T]) Slice(start, end int) collection.Collection[T] {
+	return &Sequence[T]{
+		c.elements[start:end],
+	}
+}
+
+// Values returns an iterator over all values of the underlying slice.
+func (c *Sequence[T]) Values() iter.Seq[T] {
+	return slices.Values(c.elements)
+}
+
+// Sequence methods
+// This is mostly synthatic sugar wrapping Collection functions
+// to enable function chaining:
+// i.e. sequence.Filter(f).Take(n)
 
 // Clone returns a copy of the collection. This is a shallow clone.
 func (c *Sequence[T]) Clone() *Sequence[T] {
 	return &Sequence[T]{
 		slices.Clone(c.elements),
 	}
+}
+
+// Count is an alias for collection.Count
+func (c *Sequence[T]) Count(f func(T) bool) int {
+	return collection.Count(c, f)
 }
 
 // Concat returns a new sequence concatenating the passed in sequences.
@@ -68,87 +100,46 @@ func (c *Sequence[T]) Concat(sequences ...Sequence[T]) *Sequence[T] {
 	return &Sequence[T]{e}
 }
 
-// Contains tests whether a predicate holds for at least
-// one element of this sequence.
-//
-// example:
-//
-//	c := NewSequence([]string{"Alice", "bilLy", "JOel"})
-//	c.Contains(func (i string) bool {
-//	  return strings.ToLower(i) == "joel"
-//	})
-//
-// output:
-//
-//	true
+// Contains tests whether a predicate holds for at least one element of this sequence.
 func (c *Sequence[T]) Contains(f func(T) bool) bool {
 	i, _ := collection.Find(c, f)
 	return i > -1
 }
 
-// Distinct takes a higher order "equality" function as an argument
+// Corresponds is an alias for collection.Corresponds
+func (c *Sequence[T]) Corresponds(s *Sequence[T], f func(T, T) bool) bool {
+	return collection.Corresponds(c, s, f)
+}
+
+// Distinct takes an "equality" function as an argument
 // and returns a new sequence containing all the unique elements
-// from the original sequence.
-//
-// example:
-//
-//	c := NewSequence([]int{1,2,2,3,3,3})
-//	c.DistinctFunc(func (a int, b int) bool {
-//	  return a == b
-//	})
-//
-// output:
-//
-//	[1,2,3]
-//
-// If you prefer not to pass an equality function check out
-// Distinct() in functions.go
+// If you prefer not to pass an equality function use a ComparableSequence.
 func (c *Sequence[T]) Distinct(f func(T, T) bool) *Sequence[T] {
 	return &Sequence[T]{
 		slices.CompactFunc(c.elements, f),
 	}
 }
 
-// Drop returns a new sequence with the first n elements removed.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Drop(2)
-//
-// output:
-//
-//	[3,4,5,6]
+// Drop is an alias for collection.Drop
 func (c *Sequence[T]) Drop(n int) *Sequence[T] {
-	if n <= 0 {
-		return c
-	} else if n >= c.Length() {
-		return new(Sequence[T])
-	}
-	return &Sequence[T]{
-		c.elements[n:],
-	}
+	return collection.Drop(c, n).(*Sequence[T])
 }
 
-// DropRight returns a sequence with the last n elements removed.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.DropRight(2)
-//
-// output:
-//
-//	[1,2,3,4]
+// DropWhile is an alias for collection.DropWhile
+func (c *Sequence[T]) DropWhile(f func(T) bool) *Sequence[T] {
+	return collection.DropWhile(c, f).(*Sequence[T])
+}
+
+// DropRight is an alias for collection.DropRight
 func (c *Sequence[T]) DropRight(n int) *Sequence[T] {
-	if n <= 0 {
-		return c
-	} else if n >= c.Length() {
-		return new(Sequence[T])
-	}
-	return &Sequence[T]{
-		c.elements[0 : c.Length()-n],
-	}
+	return collection.DropRight(c, n).(*Sequence[T])
+}
+
+// Equals takes a sequence and an equality function as an argument
+// and returns true if the two sequences are equal.
+// If you prefer not to pass an equality function use a ComparableSequence.
+func (c *Sequence[T]) Equals(c2 *Sequence[T], f func(T, T) bool) bool {
+	return slices.EqualFunc(c.elements, c2.elements, f)
 }
 
 // Exists is an alias for Contains
@@ -156,278 +147,93 @@ func (c *Sequence[T]) Exists(f func(T) bool) bool {
 	return c.Contains(f)
 }
 
-// Filter takes a filtering function as input and returns a new sequence
-// containing all the elements that match the filter.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Filter(func(i int) bool {
-//	  return i%2==0
-//	})
-//
-// output:
-//
-//	[2,4,6]
+// Filter is an alias for collection.Filter
 func (c *Sequence[T]) Filter(f func(T) bool) *Sequence[T] {
 	return collection.Filter(c, f).(*Sequence[T])
 }
 
-// FilterNot takes a filtering function as input and returns a new sequence
-// containing all the elements that do not match the filter.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.FilterNot(func(i int) bool {
-//	  return i%2==0
-//	})
-//
-// output:
-//
-//	[1,3,5]
+// FilterNot is an alias for collection.FilterNot
 func (c *Sequence[T]) FilterNot(f func(T) bool) *Sequence[T] {
 	return collection.FilterNot(c, f).(*Sequence[T])
 }
 
-// Find finds the first element of the sequence satisfying a predicate, if any.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Find(f(i int) bool {
-//	  return (i + 3) > 5
-//	})
-//
-// output
-//
-//	3
-func (c *Sequence[T]) Find(f func(T) bool) (T, error) {
-	i, v := collection.Find(c, f)
-	if i > -1 {
-		return v, nil
-	}
-	return v, collection.ValueNotFoundError
+// Find is an alias for collection.Find
+func (c *Sequence[T]) Find(f func(T) bool) (int, T) {
+	return collection.Find(c, f)
 }
 
-// FindWhere finds the index of the first element of the sequence satisfying a predicate.
-// If the element is not found, -1 is returned
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.FindWhere(f(i int) int {
-//	  return (i + 3) > 5
-//	})
-//
-// output
-//
-//	2
-func (c *Sequence[T]) FindWhere(f func(T) bool) int {
-	i, _ := collection.Find(c, f)
-	return i
+// FindLast is an alias for collection.FindLast
+func (c *Sequence[T]) FindLast(f func(T) bool) (int, T) {
+	return collection.FindLast(c, f)
 }
 
-// ForEach takes a function as input and applies the function
-// to each element in the sequence.
-//
-// example usage:
-//
-//	c.ForEach(func(t Task) {
-//	  t.run()
-//	})
+// ForEach is an alias for collection.ForEach
 func (c *Sequence[T]) ForEach(f func(T)) *Sequence[T] {
-	for v := range c.Values() {
-		f(v)
-	}
-	return c
+	return collection.ForEach(c, f).(*Sequence[T])
 }
 
-// Head returns the first element in a Sequence and a nil error.
-// If the sequence is empty, it returns the zero value and an error.
-//
-// example usage:
-//
-//	c := NewSequence([]string{"A","B","C"})
-//	c.Head()
-//
-// output:
-//
-//	"A", nil
+// Head is an alias for collection.Head
 func (c *Sequence[T]) Head() (T, error) {
-	if c.IsEmpty() {
-		return *new(T), collection.EmptyCollectionError
-	}
-	return c.elements[0], nil
+	return collection.Head(c)
 }
 
-// Init returns a sequence containing all elements excluding the last one.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Tail()
-//
-// output:
-//
-//	[1,2,3,4,5]
+// Init is an alias for collection.Init
 func (c *Sequence[T]) Init() *Sequence[T] {
-	if c.IsEmpty() {
-		return c
-	}
-	return &Sequence[T]{
-		c.elements[0 : len(c.elements)-1],
-	}
+	return collection.Init(c).(*Sequence[T])
 }
 
-// IsEmpty returns true if the Sequence contains 0 elements.
 func (c *Sequence[T]) IsEmpty() bool {
 	return len(c.elements) == 0
 }
 
-// Last returns the last element in the Sequence and a nil error.
-// If the sequence is empty, it returns the zero value and an error.
-//
-// example usage:
-//
-//	c := NewSequence([]string{"A","B","C"})
-//	c.Last()
-//
-// output:
-//
-//	"C", nil
+// Last is an alias for collection.Last
 func (c *Sequence[T]) Last() (T, error) {
-	if c.IsEmpty() {
-		return *new(T), collection.EmptyCollectionError
-	}
-	return c.elements[len(c.elements)-1], nil
+	return collection.Last(c)
 }
 
-// Length returns the number of elements in the Sequence.
-func (c *Sequence[T]) Length() int {
-	return len(c.elements)
-}
-
-// New implements the Collection interface.
-// this is useful for generic functions that need to create a new
-// instance of the passed concrete collection type.
-func (c *Sequence[T]) New(s ...[]T) collection.Collection[T] {
-	return NewSequence(s...)
-}
-
-// NonEmpty returns true if the Sequence contains at least 1 element.
+// returns true if the sequence is not empty.
 func (c *Sequence[T]) NonEmpty() bool {
 	return len(c.elements) > 0
 }
 
-// Partition takes a partitioning function as input and returns two sequences,
-// the first one contains the elements that match the partitioning condition,
-// the second one contains the rest of the elements.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Partition(func(i int) bool {
-//	  return i%2==0
-//	})
-//
-// output:
-//
-//	[2,4,6], [1,3,5]
+// Partition is an alias for collection.Partition
 func (c *Sequence[T]) Partition(f func(T) bool) (*Sequence[T], *Sequence[T]) {
 	left, right := collection.Partition(c, f)
 	return left.(*Sequence[T]), right.(*Sequence[T])
 }
 
-// Reverse returns a new sequence containing all elements in reverse
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Reverse
-//
-// output:
-//
-//	[6,5,4,3,2,1]
+// Reverse is an alias for collection.Reverse
 func (c *Sequence[T]) Reverse() *Sequence[T] {
-	elements := make([]T, 0, len(c.elements))
-	for i := len(c.elements) - 1; i >= 0; i-- {
-		elements = append(elements, c.elements[i])
-	}
-	return &Sequence[T]{
-		elements,
-	}
+	return collection.Reverse(c).(*Sequence[T])
 }
 
-// String implements the Stringer interface to
-// enable fmt to print the underlying slice.
+// String implements the Stringer interface.
 func (c *Sequence[T]) String() string {
 	return fmt.Sprintf("Sequence <%T> %v", *new(T), c.elements)
 }
 
-// Take returns a new sequence containing the first n elements.
-//
-// example usage:
-//
-//	[c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Take(3)
-//
-// output:
-//
-//	[1,2,3]
+// SplitAt is an alias for collection.SplitAt
+func (c *Sequence[T]) SplitAt(n int) (*Sequence[T], *Sequence[T]) {
+	left, right := collection.SplitAt(c, n)
+	return left.(*Sequence[T]), right.(*Sequence[T])
+}
+
+// Take is an alias for collection.Take
 func (c *Sequence[T]) Take(n int) *Sequence[T] {
-	if n <= 0 {
-		return new(Sequence[T])
-	}
-	return &Sequence[T]{
-		c.elements[0:min(n, c.Length())],
-	}
+	return collection.Take(c, n).(*Sequence[T])
 }
 
-// TakeRight returns a new sequence containing the last n elements.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.TakeRight(3)
-//
-// output:
-//
-//	[4,5,6]
+// TakeRight is an alias for collection.TakeRight
 func (c *Sequence[T]) TakeRight(n int) *Sequence[T] {
-	if n <= 0 {
-		return new(Sequence[T])
-	}
-	return &Sequence[T]{
-		c.elements[max(c.Length()-n, 0):],
-	}
+	return collection.TakeRight(c, n).(*Sequence[T])
 }
 
-// Tail returns a new sequence containing all elements excluding the first one.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	c.Tail()
-//
-// output:
-//
-//	[2,3,4,5,6]
+// Tail is an alias for collection.Tail
 func (c *Sequence[T]) Tail() *Sequence[T] {
-	if c.IsEmpty() {
-		return c
-	}
-	return &Sequence[T]{
-		c.elements[1:],
-	}
+	return collection.Tail(c).(*Sequence[T])
 }
 
 // ToSlice returns the underlying slice.
 func (c *Sequence[T]) ToSlice() []T {
 	return c.elements
-}
-
-// Values returns an iterator over all values of the underlying slice.
-func (c *Sequence[T]) Values() iter.Seq[T] {
-	return slices.Values(c.elements)
 }
