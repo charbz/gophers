@@ -419,3 +419,194 @@ func TestSequence_Head(t *testing.T) {
 		})
 	}
 }
+func TestSequence_Pop(t *testing.T) {
+	tests := []struct {
+		name    string
+		slice   []int
+		want    int
+		wantErr bool
+	}{
+		{
+			name:    "non-empty slice",
+			slice:   []int{1, 2, 3},
+			want:    3,
+			wantErr: false,
+		},
+		{
+			name:    "empty slice",
+			slice:   []int{},
+			want:    0,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			got, err := c.Pop()
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want, got)
+				assert.Equal(t, len(tt.slice)-1, c.Length())
+			}
+		})
+	}
+}
+
+func TestSequence_Push(t *testing.T) {
+	tests := []struct {
+		name     string
+		slice    []int
+		toPush   int
+		expected []int
+	}{
+		{
+			name:     "push to non-empty slice",
+			slice:    []int{1, 2},
+			toPush:   3,
+			expected: []int{1, 2, 3},
+		},
+		{
+			name:     "push to empty slice",
+			slice:    []int{},
+			toPush:   1,
+			expected: []int{1},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			c.Push(tt.toPush)
+			assert.Equal(t, tt.expected, c.ToSlice())
+		})
+	}
+}
+
+func TestSequence_Dequeue(t *testing.T) {
+	tests := []struct {
+		name    string
+		slice   []int
+		want    int
+		wantErr bool
+	}{
+		{
+			name:    "non-empty slice",
+			slice:   []int{1, 2, 3},
+			want:    1,
+			wantErr: false,
+		},
+		{
+			name:    "empty slice",
+			slice:   []int{},
+			want:    0,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			got, err := c.Dequeue()
+			if tt.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.want, got)
+				assert.Equal(t, len(tt.slice)-1, c.Length())
+			}
+		})
+	}
+}
+
+func TestSequence_Enqueue(t *testing.T) {
+	tests := []struct {
+		name      string
+		slice     []int
+		toEnqueue int
+		expected  []int
+	}{
+		{
+			name:      "enqueue to non-empty slice",
+			slice:     []int{1, 2},
+			toEnqueue: 3,
+			expected:  []int{1, 2, 3},
+		},
+		{
+			name:      "enqueue to empty slice",
+			slice:     []int{},
+			toEnqueue: 1,
+			expected:  []int{1},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			c.Enqueue(tt.toEnqueue)
+			assert.Equal(t, tt.expected, c.ToSlice())
+		})
+	}
+}
+
+func TestSequence_Length(t *testing.T) {
+	tests := []struct {
+		name  string
+		slice []int
+		want  int
+	}{
+		{
+			name:  "non-empty slice",
+			slice: []int{1, 2, 3},
+			want:  3,
+		},
+		{
+			name:  "empty slice",
+			slice: []int{},
+			want:  0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			got := c.Length()
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestSequence_Slice(t *testing.T) {
+	tests := []struct {
+		name  string
+		slice []int
+		start int
+		end   int
+		want  []int
+	}{
+		{
+			name:  "valid slice",
+			slice: []int{1, 2, 3, 4, 5},
+			start: 1,
+			end:   3,
+			want:  []int{2, 3},
+		},
+		{
+			name:  "empty range",
+			slice: []int{1, 2, 3},
+			start: 1,
+			end:   1,
+			want:  []int{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			got := c.Slice(tt.start, tt.end)
+			assert.Equal(t, tt.want, got.(*Sequence[int]).ToSlice())
+		})
+	}
+}

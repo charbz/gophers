@@ -111,6 +111,16 @@ func (c *Sequence[T]) Corresponds(s *Sequence[T], f func(T, T) bool) bool {
 	return collection.Corresponds(c, s, f)
 }
 
+// Dequeue removes and returns the first element of the sequence.
+func (c *Sequence[T]) Dequeue() (T, error) {
+	if len(c.elements) == 0 {
+		return *new(T), collection.EmptyCollectionError
+	}
+	element := c.elements[0]
+	c.elements = c.elements[1:]
+	return element, nil
+}
+
 // Distinct takes an "equality" function as an argument
 // and returns a new sequence containing all the unique elements
 // If you prefer not to pass an equality function use a ComparableSequence.
@@ -133,6 +143,11 @@ func (c *Sequence[T]) DropWhile(f func(T) bool) *Sequence[T] {
 // DropRight is an alias for collection.DropRight
 func (c *Sequence[T]) DropRight(n int) *Sequence[T] {
 	return collection.DropRight(c, n).(*Sequence[T])
+}
+
+// Enqueue appends an element to the sequence.
+func (c *Sequence[T]) Enqueue(v T) {
+	c.elements = append(c.elements, v)
 }
 
 // Equals takes a sequence and an equality function as an argument
@@ -196,6 +211,21 @@ func (c *Sequence[T]) NonEmpty() bool {
 	return len(c.elements) > 0
 }
 
+// Pop removes and returns the last element of the sequence.
+func (c *Sequence[T]) Pop() (T, error) {
+	if len(c.elements) == 0 {
+		return *new(T), collection.EmptyCollectionError
+	}
+	element := c.elements[len(c.elements)-1]
+	c.elements = c.elements[:len(c.elements)-1]
+	return element, nil
+}
+
+// Push appends an element to the sequence.
+func (c *Sequence[T]) Push(v T) {
+	c.elements = append(c.elements, v)
+}
+
 // Partition is an alias for collection.Partition
 func (c *Sequence[T]) Partition(f func(T) bool) (*Sequence[T], *Sequence[T]) {
 	left, right := collection.Partition(c, f)
@@ -209,7 +239,7 @@ func (c *Sequence[T]) Reverse() *Sequence[T] {
 
 // String implements the Stringer interface.
 func (c *Sequence[T]) String() string {
-	return fmt.Sprintf("Sequence <%T> %v", *new(T), c.elements)
+	return fmt.Sprintf("Seq(%T) %v", *new(T), c.elements)
 }
 
 // SplitAt is an alias for collection.SplitAt

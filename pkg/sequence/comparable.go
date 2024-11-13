@@ -2,6 +2,8 @@ package sequence
 
 import (
 	"slices"
+
+	"github.com/charbz/gophers/pkg/collection"
 )
 
 type ComparableSequence[T comparable] struct {
@@ -36,6 +38,10 @@ func (c *ComparableSequence[T]) Distinct() *ComparableSequence[T] {
 	return r
 }
 
+func (c *ComparableSequence[T]) Diff(s *ComparableSequence[T]) *ComparableSequence[T] {
+	return collection.Diff(c, s).(*ComparableSequence[T])
+}
+
 // Exists returns true if the sequence contains the given value.
 func (c *ComparableSequence[T]) Exists(v T) bool {
 	return c.Contains(v)
@@ -52,6 +58,6 @@ func (c *ComparableSequence[T]) IndexOf(v T) int {
 	return slices.Index(c.elements, v)
 }
 
-func (c *ComparableSequence[T]) New(s ...[]T) *ComparableSequence[T] {
+func (c *ComparableSequence[T]) New(s ...[]T) collection.Collection[T] {
 	return NewComparableSequence(s...)
 }
