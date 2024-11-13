@@ -17,8 +17,22 @@ func NewMockCollection[T any](items []T) *MockCollection[T] {
 	return &MockCollection[T]{items}
 }
 
+// Implementing the Collection interface.
+
+func (m *MockCollection[T]) At(index int) T {
+	return m.items[index]
+}
+
 func (m *MockCollection[T]) All() iter.Seq2[int, T] {
 	return slices.All(m.items)
+}
+
+func (m *MockCollection[T]) Append(item T) {
+	m.items = append(m.items, item)
+}
+
+func (m *MockCollection[T]) Backward() iter.Seq2[int, T] {
+	return slices.Backward(m.items)
 }
 
 func (m *MockCollection[T]) Values() iter.Seq[T] {
@@ -29,12 +43,12 @@ func (m *MockCollection[T]) Length() int {
 	return len(m.items)
 }
 
-func (m *MockCollection[T]) Append(item T) {
-	m.items = append(m.items, item)
-}
-
 func (m *MockCollection[T]) ToSlice() []T {
 	return m.items
+}
+
+func (m *MockCollection[T]) Slice(start, end int) Collection[T] {
+	return NewMockCollection(m.items[start:end])
 }
 
 func (m *MockCollection[T]) New(s ...[]T) Collection[T] {

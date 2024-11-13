@@ -318,78 +318,39 @@ func TestSequence_Find(t *testing.T) {
 		name      string
 		slice     []int
 		predicate func(int) bool
-		want      int
-		wantErr   bool
+		value     int
+		index     int
 	}{
 		{
 			name:      "find existing element",
 			slice:     []int{1, 2, 3, 4, 5},
 			predicate: func(i int) bool { return i > 3 },
-			want:      4,
-			wantErr:   false,
+			value:     4,
+			index:     3,
 		},
 		{
 			name:      "element not found",
 			slice:     []int{1, 2, 3},
 			predicate: func(i int) bool { return i > 5 },
-			want:      0, // zero value for int
-			wantErr:   true,
+			value:     0,
+			index:     -1,
 		},
 		{
 			name:      "empty slice",
 			slice:     []int{},
 			predicate: func(i int) bool { return true },
-			want:      0,
-			wantErr:   true,
+			value:     0,
+			index:     -1,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
-			got, err := c.Find(tt.predicate)
-			if tt.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
-			}
-		})
-	}
-}
+			index, value := c.Find(tt.predicate)
 
-func TestSequence_FindWhere(t *testing.T) {
-	tests := []struct {
-		name      string
-		slice     []int
-		predicate func(int) bool
-		want      int
-	}{
-		{
-			name:      "find index of existing element",
-			slice:     []int{1, 2, 3, 4, 5},
-			predicate: func(i int) bool { return i > 3 },
-			want:      3,
-		},
-		{
-			name:      "element not found",
-			slice:     []int{1, 2, 3},
-			predicate: func(i int) bool { return i > 5 },
-			want:      -1,
-		},
-		{
-			name:      "empty slice",
-			slice:     []int{},
-			predicate: func(i int) bool { return true },
-			want:      -1,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := NewSequence(tt.slice)
-			got := c.FindWhere(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			assert.Equal(t, tt.index, index)
+			assert.Equal(t, tt.value, value)
 		})
 	}
 }

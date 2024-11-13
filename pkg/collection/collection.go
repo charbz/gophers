@@ -13,12 +13,15 @@ import (
 )
 
 // Collection is a generic interface that must be implemented by all collection sub-types.
-// At a minimum, collections must support the methods All, Values, Length, Append, and Populate.
+// At a minimum, collections must support the methods defined below.
 type Collection[T any] interface {
 	All() iter.Seq2[int, T]
+	At(index int) T
 	Append(T)
+	Backward() iter.Seq2[int, T]
 	Length() int
 	New(s ...[]T) Collection[T]
+	Slice(start, end int) Collection[T]
 	Values() iter.Seq[T]
 }
 
