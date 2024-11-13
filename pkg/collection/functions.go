@@ -17,6 +17,8 @@
 
 package collection
 
+import "cmp"
+
 // Count returns the number of elements in the collection that satisfy the predicate function.
 //
 // example usage:
@@ -385,19 +387,19 @@ func Map[T, K any](s Collection[T], f func(T) K) Collection[K] {
 // output:
 //
 //	6
-func MaxBy[T any](s Collection[T], f func(T, T) int) (T, error) {
+func MaxBy[T any, K cmp.Ordered](s Collection[T], f func(T) K) (T, error) {
 	if s.Length() == 0 {
 		return *new(T), EmptyCollectionError
 	}
-	maxDiff := f(s.At(0), s.At(0))
-	max := s.At(0)
+	maxValue := f(s.At(0))
+	maxElement := s.At(0)
 	for v := range s.Values() {
-		if f(max, v) > maxDiff {
-			max = v
-			maxDiff = f(max, v)
+		if f(v) > maxValue {
+			maxElement = v
+			maxValue = f(v)
 		}
 	}
-	return max, nil
+	return maxElement, nil
 }
 
 // MinBy returns the element in the collection that has the minimum value
@@ -411,8 +413,19 @@ func MaxBy[T any](s Collection[T], f func(T, T) int) (T, error) {
 // output:
 //
 //	1
-func MinBy[T any](s Collection[T], f func(T, T) int) (T, error) {
-	return MaxBy(s, func(a T, b T) int { return -f(a, b) })
+func MinBy[T any, K cmp.Ordered](s Collection[T], f func(T) K) (T, error) {
+	if s.Length() == 0 {
+		return *new(T), EmptyCollectionError
+	}
+	minValue := f(s.At(0))
+	minElement := s.At(0)
+	for v := range s.Values() {
+		if f(v) < minValue {
+			minElement = v
+			minValue = f(v)
+		}
+	}
+	return minElement, nil
 }
 
 // Partition takes a partitioning function as input and returns two collections,
