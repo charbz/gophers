@@ -41,4 +41,7 @@ var (
 	ValueNotFoundError = &CollectionError{
 		code: 101, msg: "value not found",
 	}
+	IndexOutOfBoundsError = &CollectionError{
+		code: 102, msg: "index out of bounds",
+	}
 )
