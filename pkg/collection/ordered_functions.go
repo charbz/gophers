@@ -218,7 +218,7 @@ func ReduceRight[T, K any](s OrderedCollection[T], f func(K, T) K, init K) K {
 func Reverse[T any](s OrderedCollection[T]) OrderedCollection[T] {
 	c := s.NewOrdered()
 	for _, v := range s.Backward() {
-		c.Append(v)
+		c.Add(v)
 	}
 	return c
 }
@@ -239,7 +239,7 @@ func Reverse[T any](s OrderedCollection[T]) OrderedCollection[T] {
 func ReverseMap[T, K any](s OrderedCollection[T], f func(T) K) OrderedCollection[K] {
 	r := s.NewOrdered().(OrderedCollection[K])
 	for _, v := range s.Backward() {
-		r.Append(f(v))
+		r.Add(f(v))
 	}
 	return r
 }

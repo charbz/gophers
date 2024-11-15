@@ -36,7 +36,7 @@ func NewSet[T comparable](s ...[]T) *Set[T] {
 // The following methods implement
 // the Collection interface.
 
-func (s *Set[T]) Append(v T) {
+func (s *Set[T]) Add(v T) {
 	s.elements[v] = struct{}{}
 }
 
@@ -81,10 +81,6 @@ func (s *Set[T]) String() string {
 // The following methods are mostly synthatic sugar
 // wrapping Collection functions to enable function chaining:
 // i.e. set.Filter(f).Foreach(f2)
-
-func (s *Set[T]) Add(v T) {
-	s.Append(v)
-}
 
 // Remove removes a value from the set.
 func (s *Set[T]) Remove(v T) {
@@ -192,7 +188,7 @@ func (s *Set[T]) Intersection(sets ...*Set[T]) *Set[T] {
 }
 
 // Difference returns a new set containing the difference of the current set and the passed in set.
-func (s *Set[T]) Difference(set *Set[T]) *Set[T] {
+func (s *Set[T]) Diff(set *Set[T]) *Set[T] {
 	newSet := s.Clone()
 	for k := range set.Values() {
 		delete(newSet.elements, k)

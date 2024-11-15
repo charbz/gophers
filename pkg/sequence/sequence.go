@@ -37,8 +37,8 @@ func NewSequence[T any](s ...[]T) *Sequence[T] {
 // The following methods implement
 // the Collection interface.
 
-// Append appends an element to the sequence.
-func (c *Sequence[T]) Append(v T) {
+// Add appends an element to the sequence.
+func (c *Sequence[T]) Add(v T) {
 	c.elements = append(c.elements, v)
 }
 

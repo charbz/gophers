@@ -20,7 +20,7 @@ func NewMockCollection[T any](items ...[]T) *MockCollection[T] {
 
 // Implementing the Collection interface.
 
-func (m *MockCollection[T]) Append(item T) {
+func (m *MockCollection[T]) Add(item T) {
 	m.items = append(m.items, item)
 }
 

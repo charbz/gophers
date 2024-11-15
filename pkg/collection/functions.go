@@ -78,7 +78,7 @@ func Filter[T any](s Collection[T], f func(T) bool) Collection[T] {
 	result := s.New()
 	for v := range s.Values() {
 		if f(v) {
-			result.Append(v)
+			result.Add(v)
 		}
 	}
 	return result
@@ -151,7 +151,7 @@ func GroupBy[T any, K comparable](s Collection[T], f func(T) K) map[K]Collection
 		if _, ok := m[k]; !ok {
 			m[k] = s.New()
 		}
-		m[k].Append(v)
+		m[k].Add(v)
 	}
 	return m
 }
@@ -194,7 +194,7 @@ func Intersect[T comparable](s1 Collection[T], s2 Collection[T]) Collection[T] {
 func Map[T, K any](s Collection[T], f func(T) K) Collection[K] {
 	r := s.New().(Collection[K])
 	for v := range s.Values() {
-		r.Append(f(v))
+		r.Add(f(v))
 	}
 	return r
 }
@@ -270,9 +270,9 @@ func Partition[T any](s Collection[T], f func(T) bool) (Collection[T], Collectio
 	noMatch := s.New()
 	for v := range s.Values() {
 		if f(v) {
-			match.Append(v)
+			match.Add(v)
 		} else {
-			noMatch.Append(v)
+			noMatch.Add(v)
 		}
 	}
 	return match, noMatch

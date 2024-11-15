@@ -28,7 +28,7 @@ func (m *MockOrderedCollection[T]) All() iter.Seq2[int, T] {
 	return slices.All(m.items)
 }
 
-func (m *MockOrderedCollection[T]) Append(item T) {
+func (m *MockOrderedCollection[T]) Add(item T) {
 	m.items = append(m.items, item)
 }
 

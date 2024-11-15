@@ -44,7 +44,7 @@ func (c *ComparableSequence[T]) Distinct() *ComparableSequence[T] {
 	for v := range c.Values() {
 		_, ok := m[v]
 		if !ok {
-			r.Append(v)
+			r.Add(v)
 			m[v] = true
 		}
 	}

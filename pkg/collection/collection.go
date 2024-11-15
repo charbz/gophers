@@ -15,7 +15,7 @@ import (
 // Collection is a generic interface that must be implemented by all collection sub-types.
 // At a minimum, collections must support the methods defined below.
 type Collection[T any] interface {
-	Append(T)
+	Add(T)
 	Length() int
 	New(s ...[]T) Collection[T]
 	Random() T

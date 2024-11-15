@@ -42,7 +42,7 @@ func NewList[T any](s ...[]T) *List[T] {
 	}
 	for _, slice := range s {
 		for _, v := range slice {
-			list.Append(v)
+			list.Add(v)
 		}
 	}
 	return list
@@ -51,8 +51,8 @@ func NewList[T any](s ...[]T) *List[T] {
 // The following methods implement
 // the Collection interface.
 
-// Append adds a value to the end of the list.
-func (l *List[T]) Append(v T) {
+// Add adds a value to the end of the list.
+func (l *List[T]) Add(v T) {
 	node := &Node[T]{value: v}
 	if l.head == nil {
 		l.head = node
@@ -146,7 +146,7 @@ func (l *List[T]) Slice(start, end int) collection.OrderedCollection[T] {
 			continue
 		}
 		if i >= start && i < end {
-			list.Append(v)
+			list.Add(v)
 		}
 		if i >= end {
 			break
@@ -178,7 +178,7 @@ func (l *List[T]) String() string {
 func (l *List[T]) Clone() *List[T] {
 	clone := &List[T]{}
 	for v := range l.Values() {
-		clone.Append(v)
+		clone.Add(v)
 	}
 	return clone
 }
@@ -193,7 +193,7 @@ func (l *List[T]) Concat(lists ...*List[T]) *List[T] {
 	clone := l.Clone()
 	for _, list := range lists {
 		for v := range list.Values() {
-			clone.Append(v)
+			clone.Add(v)
 		}
 	}
 	return clone
@@ -245,7 +245,7 @@ func (l *List[T]) DropRight(n int) *List[T] {
 
 // Enqueue appends an element to the list.
 func (l *List[T]) Enqueue(v T) {
-	l.Append(v)
+	l.Add(v)
 }
 
 // Equals takes a list and an equality function as arguments
@@ -340,7 +340,7 @@ func (l *List[T]) Pop() (T, error) {
 
 // Push appends an element to the list.
 func (l *List[T]) Push(v T) {
-	l.Append(v)
+	l.Add(v)
 }
 
 // Partition is an alias for collection.Partition
