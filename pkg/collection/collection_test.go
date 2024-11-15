@@ -2,6 +2,7 @@ package collection
 
 import (
 	"iter"
+	"math/rand"
 	"slices"
 	"testing"
 
@@ -13,26 +14,14 @@ type MockCollection[T any] struct {
 	items []T
 }
 
-func NewMockCollection[T any](items []T) *MockCollection[T] {
-	return &MockCollection[T]{items}
+func NewMockCollection[T any](items ...[]T) *MockCollection[T] {
+	return &MockCollection[T]{items: slices.Concat(items...)}
 }
 
 // Implementing the Collection interface.
 
-func (m *MockCollection[T]) At(index int) T {
-	return m.items[index]
-}
-
-func (m *MockCollection[T]) All() iter.Seq2[int, T] {
-	return slices.All(m.items)
-}
-
-func (m *MockCollection[T]) Append(item T) {
+func (m *MockCollection[T]) Add(item T) {
 	m.items = append(m.items, item)
-}
-
-func (m *MockCollection[T]) Backward() iter.Seq2[int, T] {
-	return slices.Backward(m.items)
 }
 
 func (m *MockCollection[T]) Values() iter.Seq[T] {
@@ -45,6 +34,13 @@ func (m *MockCollection[T]) Length() int {
 
 func (m *MockCollection[T]) ToSlice() []T {
 	return m.items
+}
+
+func (c *MockCollection[T]) Random() T {
+	if len(c.items) == 0 {
+		return *new(T)
+	}
+	return c.items[rand.Intn(len(c.items))]
 }
 
 func (m *MockCollection[T]) Slice(start, end int) Collection[T] {

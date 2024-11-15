@@ -15,13 +15,10 @@ import (
 // Collection is a generic interface that must be implemented by all collection sub-types.
 // At a minimum, collections must support the methods defined below.
 type Collection[T any] interface {
-	All() iter.Seq2[int, T]
-	At(index int) T
-	Append(T)
-	Backward() iter.Seq2[int, T]
+	Add(T)
 	Length() int
 	New(s ...[]T) Collection[T]
-	Slice(start, end int) Collection[T]
+	Random() T
 	Values() iter.Seq[T]
 }
 
@@ -40,5 +37,8 @@ var (
 	}
 	ValueNotFoundError = &CollectionError{
 		code: 101, msg: "value not found",
+	}
+	IndexOutOfBoundsError = &CollectionError{
+		code: 102, msg: "index out of bounds",
 	}
 )
