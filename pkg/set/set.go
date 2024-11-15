@@ -98,17 +98,6 @@ func (s *Set[T]) Count(f func(T) bool) int {
 	return collection.Count(s, f)
 }
 
-// Union returns a new set containing the union of the current set and the passed in sets.
-func (s *Set[T]) Union(sets ...*Set[T]) *Set[T] {
-	clone := s.Clone()
-	for _, set := range sets {
-		for k := range set.elements {
-			clone.elements[k] = struct{}{}
-		}
-	}
-	return clone
-}
-
 // Contains returns true if the set contains the value.
 func (s *Set[T]) Contains(v T) bool {
 	_, ok := s.elements[v]
@@ -123,6 +112,15 @@ func (s *Set[T]) ContainsFunc(f func(T) bool) bool {
 		}
 	}
 	return false
+}
+
+// Difference returns a new set containing the difference of the current set and the passed in set.
+func (s *Set[T]) Diff(set *Set[T]) *Set[T] {
+	newSet := s.Clone()
+	for k := range set.Values() {
+		delete(newSet.elements, k)
+	}
+	return newSet
 }
 
 // Equals returns true if the two sets contain the same elements.
@@ -163,6 +161,17 @@ func (s *Set[T]) IsEmpty() bool {
 	return s.Length() == 0
 }
 
+// Intersection returns a new set containing the intersection of the current set and the passed in set.
+func (s *Set[T]) Intersection(s2 *Set[T]) *Set[T] {
+	result := NewSet[T]()
+	for k := range s2.elements {
+		if _, ok := s.elements[k]; ok {
+			result.Add(k)
+		}
+	}
+	return result
+}
+
 // NonEmpty returns true if the set is not empty.
 func (s *Set[T]) NonEmpty() bool {
 	return s.Length() > 0
@@ -174,24 +183,11 @@ func (s *Set[T]) Partition(f func(T) bool) (*Set[T], *Set[T]) {
 	return left.(*Set[T]), right.(*Set[T])
 }
 
-// Intersection returns a new set containing the intersection of the current set and the passed in sets.
-func (s *Set[T]) Intersection(sets ...*Set[T]) *Set[T] {
-	newSet := NewSet[T]()
-	for _, set := range sets {
-		for k := range set.Values() {
-			if s.Contains(k) {
-				newSet.elements[k] = struct{}{}
-			}
-		}
+// Union returns a new set containing the union of the current set and the passed in set.
+func (s *Set[T]) Union(s2 *Set[T]) *Set[T] {
+	result := s.Clone()
+	for k := range s2.elements {
+		result.Add(k)
 	}
-	return newSet
-}
-
-// Difference returns a new set containing the difference of the current set and the passed in set.
-func (s *Set[T]) Diff(set *Set[T]) *Set[T] {
-	newSet := s.Clone()
-	for k := range set.Values() {
-		delete(newSet.elements, k)
-	}
-	return newSet
+	return result
 }
