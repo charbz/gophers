@@ -1,17 +1,30 @@
 package sequence
 
 import (
+	"cmp"
 	"slices"
 
 	"github.com/charbz/gophers/pkg/collection"
 )
 
-type ComparableSequence[T comparable] struct {
+// ComparableSequence is a sequence of comparable types.
+// it is similar to Sequence, but with additional methods that do not require a
+// higher order function comparator to be provided as an argument:
+// Max(), Min(), Sum(), Distinct(), Diff(c), and Exists(v).
+type ComparableSequence[T cmp.Ordered] struct {
 	Sequence[T]
 }
 
+func (c *ComparableSequence[T]) New(s ...[]T) collection.Collection[T] {
+	return NewComparableSequence(s...)
+}
+
+func (c *ComparableSequence[T]) NewOrdered(s ...[]T) collection.OrderedCollection[T] {
+	return NewComparableSequence(s...)
+}
+
 // NewComparableSequence is a constructor for a sequence of comparable types.
-func NewComparableSequence[T comparable](s ...[]T) *ComparableSequence[T] {
+func NewComparableSequence[T cmp.Ordered](s ...[]T) *ComparableSequence[T] {
 	seq := new(ComparableSequence[T])
 	if len(s) == 0 {
 		return seq
@@ -58,6 +71,18 @@ func (c *ComparableSequence[T]) IndexOf(v T) int {
 	return slices.Index(c.elements, v)
 }
 
-func (c *ComparableSequence[T]) New(s ...[]T) collection.Collection[T] {
-	return NewComparableSequence(s...)
+func (c *ComparableSequence[T]) Max() T {
+	return slices.Max(c.elements)
+}
+
+func (c *ComparableSequence[T]) Min() T {
+	return slices.Min(c.elements)
+}
+
+func (c *ComparableSequence[T]) Sum() T {
+	var sum T
+	for _, v := range c.elements {
+		sum += v
+	}
+	return sum
 }

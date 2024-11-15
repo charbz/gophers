@@ -2,17 +2,21 @@
 // Use of this source code is governed by the MIT
 // license that can be found in the LICENSE file.
 
-// Package sequence implements support for generic Sequences of data.
-// A sequence wraps an underlying Go slice and provides convenience methods
-// and synthatic sugar on top of it.
-
-// for comparable types it is recommended to use ComparableSequence,
-// which provides additional methods for comparable types.
+// Package sequence implements support for a generic ordered sequence.
+// A Sequence is a Collection that wraps an underlying Go slice and provides
+// convenience methods and synthatic sugar on top of it.
+//
+// Compared to a List, a Sequence allows for efficient O(1) access to arbitrary elements
+// but slower insertion and removal time, making it ideal for situations where fast random access is needed.
+//
+// for comparable types it is recommended to use
+// ComparableSequence which provides additional methods
 package sequence
 
 import (
 	"fmt"
 	"iter"
+	"math/rand"
 	"slices"
 
 	"github.com/charbz/gophers/pkg/collection"
@@ -30,26 +34,12 @@ func NewSequence[T any](s ...[]T) *Sequence[T] {
 	return &Sequence[T]{elements: slices.Concat(s...)}
 }
 
-// Implementing the Collection interface.
-
-// All returns an iterator over all elements of the sequence.
-func (c *Sequence[T]) All() iter.Seq2[int, T] {
-	return slices.All(c.elements)
-}
-
-// At returns the element at the given index.
-func (c *Sequence[T]) At(index int) T {
-	return c.elements[index]
-}
+// The following methods implement
+// the Collection interface.
 
 // Append appends an element to the sequence.
 func (c *Sequence[T]) Append(v T) {
 	c.elements = append(c.elements, v)
-}
-
-// Backward returns an iterator over all elements of the sequence in reverse order.
-func (c *Sequence[T]) Backward() iter.Seq2[int, T] {
-	return slices.Backward(c.elements)
 }
 
 // Length returns the number of elements in the sequence.
@@ -62,11 +52,12 @@ func (c *Sequence[T]) New(s ...[]T) collection.Collection[T] {
 	return NewSequence(s...)
 }
 
-// Slice returns a new sequence containing the elements from the start index to the end index.
-func (c *Sequence[T]) Slice(start, end int) collection.Collection[T] {
-	return &Sequence[T]{
-		c.elements[start:end],
+// Random returns a random element from the sequence.
+func (c *Sequence[T]) Random() T {
+	if len(c.elements) == 0 {
+		return *new(T)
 	}
+	return c.elements[rand.Intn(len(c.elements))]
 }
 
 // Values returns an iterator over all values of the underlying slice.
@@ -74,9 +65,41 @@ func (c *Sequence[T]) Values() iter.Seq[T] {
 	return slices.Values(c.elements)
 }
 
-// Sequence methods
-// This is mostly synthatic sugar wrapping Collection functions
-// to enable function chaining:
+// The following methods implement
+// the OrderedCollection interface.
+
+// At returns the element at the given index.
+func (c *Sequence[T]) At(index int) T {
+	if index < 0 || index >= len(c.elements) {
+		panic(collection.IndexOutOfBoundsError)
+	}
+	return c.elements[index]
+}
+
+// All returns an iterator over all elements of the sequence.
+func (c *Sequence[T]) All() iter.Seq2[int, T] {
+	return slices.All(c.elements)
+}
+
+// Backward returns an iterator over all elements of the sequence in reverse order.
+func (c *Sequence[T]) Backward() iter.Seq2[int, T] {
+	return slices.Backward(c.elements)
+}
+
+// Slice returns a new sequence containing the elements from the start index to the end index.
+func (c *Sequence[T]) Slice(start, end int) collection.OrderedCollection[T] {
+	return &Sequence[T]{
+		c.elements[start:end],
+	}
+}
+
+// NewOrdered returns a new ordered collection.
+func (c *Sequence[T]) NewOrdered(s ...[]T) collection.OrderedCollection[T] {
+	return NewSequence(s...)
+}
+
+// The following methods are mostly synthatic sugar
+// wrapping Collection functions to enable function chaining:
 // i.e. sequence.Filter(f).Take(n)
 
 // Clone returns a copy of the collection. This is a shallow clone.

@@ -24,55 +24,23 @@ func NewSet[T comparable](s ...[]T) *Set[T] {
 
 // Implement the Collection interface.
 
-func (s *Set[T]) All() iter.Seq2[int, T] {
-	return func(yield func(int, T) bool) {
-		i := 0
-		for v := range s.elements {
-			if !yield(i, v) {
-				break
-			}
-		}
-	}
-}
-
-func (s *Set[T]) At(index int) T {
-	if index < 0 || index >= len(s.elements) {
-		panic(collection.IndexOutOfBoundsError)
-	}
-	for i, v := range s.All() {
-		if i == index {
-			return v
-		}
-	}
-	panic(collection.IndexOutOfBoundsError)
-}
-
 func (s *Set[T]) Append(v T) {
 	s.elements[v] = struct{}{}
-}
-
-func (s *Set[T]) Backward() iter.Seq2[int, T] {
-	slice := s.ToSlice()
-	return func(yield func(int, T) bool) {
-		for i := len(slice) - 1; i >= 0; i-- {
-			if !yield(i, slice[i]) {
-				break
-			}
-		}
-	}
 }
 
 func (s *Set[T]) Length() int {
 	return len(s.elements)
 }
 
-func (s *Set[T]) New(s2 ...[]T) collection.Collection[T] {
-	return NewSet(s2...)
+func (s *Set[T]) Random() T {
+	for v := range s.elements {
+		return v
+	}
+	panic(collection.EmptyCollectionError)
 }
 
-func (s *Set[T]) Slice(start, end int) collection.Collection[T] {
-	slice := s.ToSlice()[start:end]
-	return NewSet(slice)
+func (s *Set[T]) New(s2 ...[]T) collection.Collection[T] {
+	return NewSet(s2...)
 }
 
 func (s *Set[T]) Values() iter.Seq[T] {
