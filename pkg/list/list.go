@@ -297,6 +297,11 @@ func (l *List[T]) ForEach(f func(T)) *List[T] {
 	return collection.ForEach(l, f).(*List[T])
 }
 
+// ForAll is an alias for collection.ForAll
+func (l *List[T]) ForAll(f func(T) bool) bool {
+	return collection.ForAll(l, f)
+}
+
 // Head is an alias for collection.Head
 func (l *List[T]) Head() (T, error) {
 	return collection.Head(l)

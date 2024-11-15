@@ -1,8 +1,19 @@
+// Copyright (c) 2024 Gophers. All rights reserved.
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
+// Package set implements support for a generic unordered Set.
+// A Set is a Collection that wraps an underlying hash map
+// and provides convenience methods and synthatic sugar on top of it.
+//
+// Set elements are unique and unordered by default. However Sets share
+// some methods with other collections and implement the Collection interface.
 package set
 
 import (
 	"fmt"
 	"iter"
+	"maps"
 
 	"github.com/charbz/gophers/pkg/collection"
 )
@@ -22,7 +33,8 @@ func NewSet[T comparable](s ...[]T) *Set[T] {
 	return set
 }
 
-// Implement the Collection interface.
+// The following methods implement
+// the Collection interface.
 
 func (s *Set[T]) Append(v T) {
 	s.elements[v] = struct{}{}
@@ -45,8 +57,8 @@ func (s *Set[T]) New(s2 ...[]T) collection.Collection[T] {
 
 func (s *Set[T]) Values() iter.Seq[T] {
 	return func(yield func(T) bool) {
-		for v := range s.elements {
-			if !yield(v) {
+		for k := range s.elements {
+			if !yield(k) {
 				break
 			}
 		}
@@ -61,6 +73,129 @@ func (s *Set[T]) ToSlice() []T {
 	return slice
 }
 
+// implement the Stringer interface
 func (s *Set[T]) String() string {
 	return fmt.Sprintf("Set(%T) %v", *new(T), s.ToSlice())
+}
+
+// The following methods are mostly synthatic sugar
+// wrapping Collection functions to enable function chaining:
+// i.e. set.Filter(f).Foreach(f2)
+
+func (s *Set[T]) Add(v T) {
+	s.Append(v)
+}
+
+// Remove removes a value from the set.
+func (s *Set[T]) Remove(v T) {
+	delete(s.elements, v)
+}
+
+// Clone returns a copy of the collection. This is a shallow clone.
+func (s *Set[T]) Clone() *Set[T] {
+	return &Set[T]{
+		elements: maps.Clone(s.elements),
+	}
+}
+
+func (s *Set[T]) Count(f func(T) bool) int {
+	return collection.Count(s, f)
+}
+
+// Union returns a new set containing the union of the current set and the passed in sets.
+func (s *Set[T]) Union(sets ...*Set[T]) *Set[T] {
+	clone := s.Clone()
+	for _, set := range sets {
+		for k := range set.elements {
+			clone.elements[k] = struct{}{}
+		}
+	}
+	return clone
+}
+
+// Contains returns true if the set contains the value.
+func (s *Set[T]) Contains(v T) bool {
+	_, ok := s.elements[v]
+	return ok
+}
+
+// ContainsFunc returns true if the set contains a value that satisfies the predicate.
+func (s *Set[T]) ContainsFunc(f func(T) bool) bool {
+	for v := range s.Values() {
+		if f(v) {
+			return true
+		}
+	}
+	return false
+}
+
+// Equals returns true if the two sets contain the same elements.
+func (s *Set[T]) Equals(s2 *Set[T]) bool {
+	if s.Length() != s2.Length() {
+		return false
+	}
+	for k := range s.Values() {
+		if !s2.Contains(k) {
+			return false
+		}
+	}
+	return true
+}
+
+// Filter is an alias for collection.Filter
+func (s *Set[T]) Filter(f func(T) bool) *Set[T] {
+	return collection.Filter(s, f).(*Set[T])
+}
+
+// FilterNot is an alias for collection.FilterNot
+func (s *Set[T]) FilterNot(f func(T) bool) *Set[T] {
+	return collection.FilterNot(s, f).(*Set[T])
+}
+
+// ForEach is an alias for collection.ForEach
+func (s *Set[T]) ForEach(f func(T)) *Set[T] {
+	return collection.ForEach(s, f).(*Set[T])
+}
+
+// ForAll is an alias for collection.ForAll
+func (s *Set[T]) ForAll(f func(T) bool) bool {
+	return collection.ForAll(s, f)
+}
+
+// IsEmpty returns true if the set is empty.
+func (s *Set[T]) IsEmpty() bool {
+	return s.Length() == 0
+}
+
+// NonEmpty returns true if the set is not empty.
+func (s *Set[T]) NonEmpty() bool {
+	return s.Length() > 0
+}
+
+// Partition is an alias for collection.Partition
+func (s *Set[T]) Partition(f func(T) bool) (*Set[T], *Set[T]) {
+	left, right := collection.Partition(s, f)
+	return left.(*Set[T]), right.(*Set[T])
+}
+
+// Intersection returns a new set containing the intersection of the current set and the passed in sets.
+func (s *Set[T]) Intersection(sets ...*Set[T]) *Set[T] {
+	newSet := NewSet[T]()
+	for _, set := range sets {
+		for k := range set.Values() {
+			if s.Contains(k) {
+				newSet.elements[k] = struct{}{}
+			}
+		}
+	}
+	return newSet
+}
+
+// Difference returns a new set containing the difference of the current set and the passed in set.
+func (s *Set[T]) Difference(set *Set[T]) *Set[T] {
+	newSet := s.Clone()
+	for k := range set.Values() {
+		delete(newSet.elements, k)
+	}
+	return newSet
 }
