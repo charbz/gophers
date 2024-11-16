@@ -146,9 +146,14 @@ func (s *Set[T]) FilterNot(f func(T) bool) *Set[T] {
 	return collection.FilterNot(s, f).(*Set[T])
 }
 
-// ForEach is an alias for collection.ForEach
-func (s *Set[T]) ForEach(f func(T)) *Set[T] {
-	return collection.ForEach(s, f).(*Set[T])
+// Apply applies a function to each element in the set.
+func (s *Set[T]) Apply(f func(T) T) *Set[T] {
+	for k := range s.elements {
+		v := f(k)
+		s.Remove(k)
+		s.Add(v)
+	}
+	return s
 }
 
 // ForAll is an alias for collection.ForAll

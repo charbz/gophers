@@ -98,6 +98,14 @@ func (c *Sequence[T]) NewOrdered(s ...[]T) collection.OrderedCollection[T] {
 	return NewSequence(s...)
 }
 
+// Apply applies a function to each element in the sequence.
+func (c *Sequence[T]) Apply(f func(T) T) *Sequence[T] {
+	for i := range c.elements {
+		c.elements[i] = f(c.elements[i])
+	}
+	return c
+}
+
 // The following methods are mostly synthatic sugar
 // wrapping Collection functions to enable function chaining:
 // i.e. sequence.Filter(f).Take(n)
@@ -148,9 +156,7 @@ func (c *Sequence[T]) Dequeue() (T, error) {
 // and returns a new sequence containing all the unique elements
 // If you prefer not to pass an equality function use a ComparableSequence.
 func (c *Sequence[T]) Distinct(f func(T, T) bool) *Sequence[T] {
-	return &Sequence[T]{
-		slices.CompactFunc(c.elements, f),
-	}
+	return collection.Distinct(c, f).(*Sequence[T])
 }
 
 // Drop is an alias for collection.Drop
@@ -205,11 +211,6 @@ func (c *Sequence[T]) FindLast(f func(T) bool) (int, T) {
 	return collection.FindLast(c, f)
 }
 
-// ForEach is an alias for collection.ForEach
-func (c *Sequence[T]) ForEach(f func(T)) *Sequence[T] {
-	return collection.ForEach(c, f).(*Sequence[T])
-}
-
 // ForAll is an alias for collection.ForAll
 func (c *Sequence[T]) ForAll(f func(T) bool) bool {
 	return collection.ForAll(c, f)
@@ -258,6 +259,13 @@ func (c *Sequence[T]) Push(v T) {
 func (c *Sequence[T]) Partition(f func(T) bool) (*Sequence[T], *Sequence[T]) {
 	left, right := collection.Partition(c, f)
 	return left.(*Sequence[T]), right.(*Sequence[T])
+}
+
+// PartitionAt partitions the sequence at the given index.
+func (c *Sequence[T]) PartitionAt(n int) (*Sequence[T], *Sequence[T]) {
+	left := NewSequence(c.elements[:n])
+	right := NewSequence(c.elements[n:])
+	return left, right
 }
 
 // Reverse is an alias for collection.Reverse

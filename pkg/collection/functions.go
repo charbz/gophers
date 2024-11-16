@@ -63,6 +63,33 @@ func Diff[T comparable](s1 Collection[T], s2 Collection[T]) Collection[T] {
 	})
 }
 
+// Distinct returns a new collection containing only the unique elements of the collection.
+//
+// example usage:
+//
+//	c := NewSequence([]int{1,1,1,4,5,1,2,2})
+//	Distinct(c, func(i int, i2 int) bool { return i == i2 })
+//
+// output:
+//
+//	[1,4,5,2]
+func Distinct[T any](s Collection[T], f func(T, T) bool) Collection[T] {
+	s2 := s.New()
+	for v := range s.Values() {
+		match := false
+		for v2 := range s2.Values() {
+			if f(v, v2) {
+				match = true
+				break
+			}
+		}
+		if !match {
+			s2.Add(v)
+		}
+	}
+	return s2
+}
+
 // Filter returns a new collection containing only the elements that
 // satisfy the predicate function.
 //
@@ -115,21 +142,6 @@ func ForAll[T any](s Collection[T], f func(T) bool) bool {
 		}
 	}
 	return true
-}
-
-// ForEach takes a function as input and applies the function to each element in the collection.
-//
-// example usage:
-//
-//	c := NewSequence([]int{1,2,3,4,5,6})
-//	ForEach(c, func(i int) {
-//	  fmt.Println(i)
-//	})
-func ForEach[T any](s Collection[T], f func(T)) Collection[T] {
-	for v := range s.Values() {
-		f(v)
-	}
-	return s
 }
 
 // GroupBy takes a collection and a grouping function as input and returns a map

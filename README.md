@@ -1,54 +1,134 @@
-# Gophers - generic collections library
+# Gophers - The generic collections library for Go
 
-Gophers is the generic collections library offering tons of features right out of the box.
+Gophers is an awesome collections library for Go offering tons of functionality right out of the box.
+
+A collection is a generic interface of common operations like (Filter, Map, Reduce, Partition, etc.) implemented by:
+- Sequence
+- ComparableSequence
+- List
+- ComparableList
+- Set
+
+Here are some examples of what you can do:
+
+## Installation
+```bash
+go get github.com/charbz/gophers
+```
 
 ## Quick Start
+
+### Using Generic Data Types
 
 ```go
 import (
   "github.com/charbz/gophers/pkg/list"
-  "github.com/charbz/gophers/pkg/set"
-  "github.com/charbz/gophers/pkg/collection"
 )
 
-// some examples using a comparable list
+type Foo struct {
+  a int
+  b string
+}
 
-nums := list.NewComparableList([]int{1, 2, 2, 3, 4, 5, 5, 6, 9, 10})
+// Create a list of Foo
+foos := list.NewList([]Foo{
+  {a: 1, b: "one"}, 
+  {a: 2, b: "two"}, 
+  {a: 3, b: "three"}, 
+  {a: 4, b: "four"}, 
+  {a: 5, b: "five"},
+})
 
-nums.Filter(func(i int) bool { return i%2 == 0 }) // List [2,2,4,6,10]
+	foos.Filter(
+		func(f Foo) bool { return f.a%2 == 0 }, // List[Foo]{{2 two},{4 four}}
+	)
 
-nums.FilterNot(func(i int) bool { return i%2 == 0 }) // List [1,3,5,5,9]
+	foos.FilterNot(
+		func(f Foo) bool { return f.a%2 == 0 }, // List[Foo]{{1 one},{3 three},{5 five}}
+	)
 
-nums.Distinct() // List [1,2,3,4,5,6,9,10]
+	foos.Partition(
+		func(f Foo) bool { return len(f.b) == 3 }, // List[Foo]{{1 one},{2 two}} , List[Foo]{{3 three},{4 four},{5 five}}
+	)
 
-nums.Distinct().Drop(2) // List [3,4,5,6,9,10]
+	foos.PartitionAt(3) // List[Foo]{{1 one},{2 two},{3 three},{4 four}} , List[Foo]{{5 five}}
 
-nums.PartitionAt(6) // List [1,2,3,4,5,5],  List [6,9,10]
+	foos.Count(
+		func(f Foo) bool { return f.a < 3 }, // 2
+	)
 
-nums.Partition(func(i int) bool { return i%2 == 0 }) // List [2,2,4,6,10] List [1,3,5,5,9]
+	bars := foos.Concat(
+		list.NewList([]Foo{{a: 1, b: "one"}, {a: 2, b: "two"}}), // List[Foo]{{1 one} {2 two} {3 three} {4 four} {5 five} {1 one} {2 two}}
+	)
 
-nums.Diff(list.NewComparableList([]int{1, 2, 3, 4})) // List [5,5,6,9,10]
+	bars.Distinct(
+		func(i Foo, j Foo) bool { return i.a == j.a }, // List[Foo]{{1 one} {2 two} {3 three} {4 four} {5 five}}
+	)
 
-nums.Max() // 10
+  func multiplyBy2(f Foo) Foo {
+    f.a *= 2
+    f.b += "X2"
+    return f
+  }
 
-nums.Min() // 1
+	bars.Apply(multiplyBy2) // List[Foo]{{2 oneX2} {4 twoX2} {6 threeX2} {8 fourX2} {10 fiveX2}}
+```
 
-nums.Sum() // 47
+### Comparable Collections
 
-nums.Reverse() // List [10,9,6,5,5,4,3,2,2,1]
+Comparable collections are collections who's elements can be compared to each other using equality.
+A ComparableList inherits all the operations from List, but with additional convenience methods.
 
-nums.Count(func(i int) bool { return i>5}) // 3
+```go
+import (
+  "github.com/charbz/gophers/pkg/list"
+)
 
-collection.Map(nums, func(i int) int { return i * 2 }) // List [2,4,4,6,8,10,10,12,18,20]
+nums := list.NewComparableList([]int{1,1,2,2,2,3,4,5})
 
-collection.Reduce(nums, func(acc int, i int) float64 { return acc + i/2 }, 0) // 23.5
+nums.Max()           // 5
 
+nums.Min()           // 1
 
-// some examples using a set
+nums.Sum()           // 20
+
+nums.Reverse()       // List {5,4,3,2,2,1,1}
+
+nums.Distinct()      // List {1,2,3,4,5}
+
+nums.PartitionAt(3)  // List {1,1,2,2}, List {2,3,4,5}
+
+nums.Take(3)         // List {1,1,2} 
+
+nums.TakeRight(3)    // List {2,3,4}
+
+nums.Drop(3)         // List {2,3,4,5}
+
+nums.DropRight(3)    // List {1,1,2}
+
+nums.DropWhile(
+  func(i int) bool { return i<3 } // List [3,4,5]
+)
+nums.Diff(
+  list.NewComparableList([]int{1,2,3}) // List [4,5]
+)
+nums.Count(
+  func(i int) bool { return i>2 } // 3
+)
+```
+
+### Basic Sets
+
+Sets are collections of unique elements. Sets inherit all operations from Collection, and have a few additional convenience methods for set operations.
+
+```go
+import (
+  "github.com/charbz/gophers/pkg/set"
+)
 
 letters := set.NewSet([]string{"A", "B", "C", "A", "C", "A"}) // Set ["A", "B", "C"]
+other := set.NewSet([]string{"A", "B", "D"})
 
-other := set.NewSet([]string{"A", "B", "D"}) // Set ["A", "B", "D"]
 
 letters.Intersect(other) // Set ["A", "B"]
 
@@ -56,17 +136,59 @@ letters.Union(other) // Set ["A", "B", "C", "D"]
 
 letters.Diff(other) // Set ["C"]
 
-collection.Map(letters, func(s string) string { return s + "!" }) // Set ["A!", "B!", "C!"]
+letters.ForEach(
+  func(s string) { s += "!" } // Set ["A!", "B!", "C!"]
+)
 
-collection.Reduce(letters, func(acc string, i string) string { return acc + i }, "") // "ABC"
+letters.Reduce(
+  func(acc string, i string) string { return acc + "-" + i }, ""  // "A-B-C"
+)
+```
 
-// There are many more features, check out the docs for more details.
+### Collection Utils
 
+You can use these utils on any concrete collection type.
+
+```go
+import (
+  "github.com/charbz/gophers/pkg/collection"
+  "github.com/charbz/gophers/pkg/list"
+  "github.com/charbz/gophers/pkg/sequence"
+)
+
+type Foo struct {
+  a int
+  b string
+}
+
+// Create a list of Foo
+foos := list.NewList([]Foo{
+  {a: 1, b: "one"}, 
+  {a: 2, b: "two"}, 
+  {a: 3, b: "three"}, 
+  {a: 4, b: "four"}, 
+  {a: 5, b: "five"}
+})
+
+bars := sequence.NewSequence([]Foo{
+  {a: 1, b: "one"}, 
+  {a: 2, b: "two"}
+})
+
+collection.Map(foos, func(f Foo) string { return f.b }) // List ["one", "two", "three", "four", "five"]
+
+collection.Reduce(bars, func(acc string, f Foo) string { return acc + f.b }, "") // "onetwo"
+
+collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
+
+collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
+
+// There are many more utils, see the docs for more details.
 ```
 
 ## Core Features
 
-- **Collection** : A generic collection interface that provides a common interface for all collections.
+- **Collection** : A generic collection interface providing common operations for all concrete collections.
 - **Sequence** : An ordered collection wrapping a Go slice. Great for fast random access.
 - **List** : An ordered collection wrapping a linked list. Great for fast insertion and removal, implementing queues and stacks.
 - **Set** : A hash set implementation.
@@ -258,6 +380,5 @@ These operations are available on all collections, including Sequence, List, and
 
 Contributions are welcome! Feel free to submit a Pull Request.
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+If you have any ideas for new features or improvements, or would like to chat,
+Feel free to reach out on [Reddit r/gopherslib](https://www.reddit.com/r/gopherslib).
