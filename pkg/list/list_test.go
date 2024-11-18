@@ -6,36 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestList_ForEach(t *testing.T) {
-	tests := []struct {
-		name  string
-		slice []int
-		want  int
-	}{
-		{
-			name:  "sum all elements",
-			slice: []int{1, 2, 3, 4, 5},
-			want:  15,
-		},
-		{
-			name:  "empty list",
-			slice: []int{},
-			want:  0,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			l := NewList(tt.slice)
-			sum := 0
-			l.ForEach(func(i int) {
-				sum += i
-			})
-			assert.Equal(t, tt.want, sum)
-		})
-	}
-}
-
 func TestList_Head(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -662,7 +632,7 @@ func TestList_SplitAt(t *testing.T) {
 		{
 			name:      "split in middle",
 			slice:     []int{1, 2, 3, 4, 5},
-			n:         3,
+			n:         2,
 			wantLeft:  []int{1, 2, 3},
 			wantRight: []int{4, 5},
 		},
@@ -670,8 +640,8 @@ func TestList_SplitAt(t *testing.T) {
 			name:      "split at start",
 			slice:     []int{1, 2, 3},
 			n:         0,
-			wantLeft:  []int{},
-			wantRight: []int{1, 2, 3},
+			wantLeft:  []int{1},
+			wantRight: []int{2, 3},
 		},
 		{
 			name:      "split at end",

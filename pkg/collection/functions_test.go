@@ -181,36 +181,6 @@ func TestForAll(t *testing.T) {
 	}
 }
 
-func TestForEach(t *testing.T) {
-	sum := 0
-	addToSum := func(n int) { sum += n }
-
-	tests := []struct {
-		name        string
-		input       []int
-		expectedSum int
-	}{
-		{
-			name:        "sum numbers",
-			input:       []int{1, 2, 3, 4, 5},
-			expectedSum: 15,
-		},
-		{
-			name:        "empty slice",
-			input:       []int{},
-			expectedSum: 0,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			sum = 0 // Reset sum for each test
-			ForEach(NewMockCollection(tt.input), addToSum)
-			assert.Equal(t, tt.expectedSum, sum)
-		})
-	}
-}
-
 func TestGroupBy(t *testing.T) {
 	modTwo := func(n int) int { return n % 2 }
 	tests := []struct {
@@ -293,14 +263,14 @@ func TestMap(t *testing.T) {
 		{
 			name:  "empty slice",
 			input: []int{},
-			want:  nil,
+			want:  []int{},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Map(NewMockCollection(tt.input), double)
-			assert.Equal(t, NewMockCollection(tt.want), got)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

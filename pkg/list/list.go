@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"iter"
 	"math/rand"
-	"slices"
 
 	"github.com/charbz/gophers/pkg/collection"
 )
@@ -174,6 +173,14 @@ func (l *List[T]) String() string {
 	return fmt.Sprintf("List(%T) %v", *new(T), l.ToSlice())
 }
 
+// Apply applies a function to each element in the list.
+func (l *List[T]) Apply(f func(T) T) *List[T] {
+	for node := l.head; node != nil; node = node.next {
+		node.value = f(node.value)
+	}
+	return l
+}
+
 // Clone returns a copy of the list. This is a shallow clone.
 func (l *List[T]) Clone() *List[T] {
 	clone := &List[T]{}
@@ -221,11 +228,12 @@ func (l *List[T]) Dequeue() (T, error) {
 	return element, nil
 }
 
-// Distinct takes an "equality" function as an argument
-// and returns a new sequence containing all the unique elements
-// If you prefer not to pass an equality function use a ComparableList.
+// Distinct takes an "equality" function as an argument such as
+// func(a T, b T) bool {return a == b}
+// and returns a new sequence containing all the unique elements.
+// If you don't want to pass an equality function use a ComparableList.
 func (l *List[T]) Distinct(f func(T, T) bool) *List[T] {
-	return NewList(slices.CompactFunc(l.ToSlice(), f))
+	return collection.Distinct(l, f).(*List[T])
 }
 
 // Drop is an alias for collection.Drop
@@ -292,11 +300,6 @@ func (l *List[T]) FindLast(f func(T) bool) (int, T) {
 	return collection.FindLast(l, f)
 }
 
-// ForEach is an alias for collection.ForEach
-func (l *List[T]) ForEach(f func(T)) *List[T] {
-	return collection.ForEach(l, f).(*List[T])
-}
-
 // ForAll is an alias for collection.ForAll
 func (l *List[T]) ForAll(f func(T) bool) bool {
 	return collection.ForAll(l, f)
@@ -349,15 +352,23 @@ func (l *List[T]) Partition(f func(T) bool) (*List[T], *List[T]) {
 	return left.(*List[T]), right.(*List[T])
 }
 
+// SplitAt splits the list at the given index.
+func (l *List[T]) SplitAt(n int) (*List[T], *List[T]) {
+	left := NewList[T]()
+	right := NewList[T]()
+	for i, v := range l.All() {
+		if i <= n {
+			left.Add(v)
+		} else {
+			right.Add(v)
+		}
+	}
+	return left, right
+}
+
 // Reverse is an alias for collection.Reverse
 func (l *List[T]) Reverse() *List[T] {
 	return collection.Reverse(l).(*List[T])
-}
-
-// SplitAt is an alias for collection.SplitAt
-func (l *List[T]) SplitAt(n int) (*List[T], *List[T]) {
-	left, right := collection.SplitAt(l, n)
-	return left.(*List[T]), right.(*List[T])
 }
 
 // Take is an alias for collection.Take

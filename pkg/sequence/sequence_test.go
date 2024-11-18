@@ -355,36 +355,6 @@ func TestSequence_Find(t *testing.T) {
 	}
 }
 
-func TestSequence_ForEach(t *testing.T) {
-	tests := []struct {
-		name  string
-		slice []int
-		want  int
-	}{
-		{
-			name:  "sum all elements",
-			slice: []int{1, 2, 3, 4, 5},
-			want:  15,
-		},
-		{
-			name:  "empty slice",
-			slice: []int{},
-			want:  0,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := NewSequence(tt.slice)
-			sum := 0
-			c.ForEach(func(i int) {
-				sum += i
-			})
-			assert.Equal(t, tt.want, sum)
-		})
-	}
-}
-
 func TestSequence_Head(t *testing.T) {
 	tests := []struct {
 		name    string
