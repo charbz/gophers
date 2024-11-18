@@ -352,8 +352,8 @@ func (l *List[T]) Partition(f func(T) bool) (*List[T], *List[T]) {
 	return left.(*List[T]), right.(*List[T])
 }
 
-// PartitionAt is an alias for collection.PartitionAt
-func (l *List[T]) PartitionAt(n int) (*List[T], *List[T]) {
+// SplitAt splits the list at the given index.
+func (l *List[T]) SplitAt(n int) (*List[T], *List[T]) {
 	left := NewList[T]()
 	right := NewList[T]()
 	for i, v := range l.All() {
@@ -369,12 +369,6 @@ func (l *List[T]) PartitionAt(n int) (*List[T], *List[T]) {
 // Reverse is an alias for collection.Reverse
 func (l *List[T]) Reverse() *List[T] {
 	return collection.Reverse(l).(*List[T])
-}
-
-// SplitAt is an alias for collection.SplitAt
-func (l *List[T]) SplitAt(n int) (*List[T], *List[T]) {
-	left, right := collection.SplitAt(l, n)
-	return left.(*List[T]), right.(*List[T])
 }
 
 // Take is an alias for collection.Take

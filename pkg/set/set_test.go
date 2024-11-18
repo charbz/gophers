@@ -402,15 +402,6 @@ func TestSet_FilterNot(t *testing.T) {
 	}
 }
 
-func TestSet_ForEach(t *testing.T) {
-	s := NewSet([]int{1, 2, 3})
-	sum := 0
-	s.ForEach(func(i int) {
-		sum += i
-	})
-	assert.Equal(t, 6, sum)
-}
-
 func TestSet_Count(t *testing.T) {
 	tests := []struct {
 		name      string

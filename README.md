@@ -39,39 +39,39 @@ foos := list.NewList([]Foo{
   {a: 5, b: "five"},
 })
 
-	foos.Filter(
-		func(f Foo) bool { return f.a%2 == 0 }, // List[Foo]{{2 two},{4 four}}
-	)
+foos.Filter(
+  func(f Foo) bool { return f.a%2 == 0 }, // List[Foo] {{2 two},{4 four}}
+)
 
-	foos.FilterNot(
-		func(f Foo) bool { return f.a%2 == 0 }, // List[Foo]{{1 one},{3 three},{5 five}}
-	)
+foos.FilterNot(
+  func(f Foo) bool { return f.a%2 == 0 }, // List[Foo] {{1 one},{3 three},{5 five}}
+)
 
-	foos.Partition(
-		func(f Foo) bool { return len(f.b) == 3 }, // List[Foo]{{1 one},{2 two}} , List[Foo]{{3 three},{4 four},{5 five}}
-	)
+foos.Partition(
+  func(f Foo) bool { return len(f.b) == 3 }, // List[Foo] {{1 one},{2 two}} , List[Foo] {{3 three},{4 four},{5 five}}
+)
 
-	foos.PartitionAt(3) // List[Foo]{{1 one},{2 two},{3 three},{4 four}} , List[Foo]{{5 five}}
+foos.SplitAt(3) // List[Foo] {{1 one},{2 two},{3 three},{4 four}} , List[Foo] {{5 five}}
 
-	foos.Count(
-		func(f Foo) bool { return f.a < 3 }, // 2
-	)
+foos.Count(
+  func(f Foo) bool { return f.a < 3 }, // 2
+)
 
-	bars := foos.Concat(
-		list.NewList([]Foo{{a: 1, b: "one"}, {a: 2, b: "two"}}), // List[Foo]{{1 one} {2 two} {3 three} {4 four} {5 five} {1 one} {2 two}}
-	)
+bars := foos.Concat(
+  list.NewList([]Foo{{a: 1, b: "one"}, {a: 2, b: "two"}}), // List[Foo] {{1 one} {2 two} {3 three} {4 four} {5 five} {1 one} {2 two}}
+)
 
-	bars.Distinct(
-		func(i Foo, j Foo) bool { return i.a == j.a }, // List[Foo]{{1 one} {2 two} {3 three} {4 four} {5 five}}
-	)
+bars.Distinct(
+  func(i Foo, j Foo) bool { return i.a == j.a }, // List[Foo] {{1 one} {2 two} {3 three} {4 four} {5 five}}
+)
 
-  func multiplyBy2(f Foo) Foo {
+foos.Apply(
+  func(f Foo) Foo {
     f.a *= 2
-    f.b += "X2"
+    f.b += " * two"
     return f
-  }
-
-	bars.Apply(multiplyBy2) // List[Foo]{{2 oneX2} {4 twoX2} {6 threeX2} {8 fourX2} {10 fiveX2}}
+  },
+) // List[Foo] {{2 one * two} {4 two * two} {6 three * two} {8 four * two} {10 five * two}}
 ```
 
 ### Comparable Collections
@@ -84,36 +84,38 @@ import (
   "github.com/charbz/gophers/pkg/list"
 )
 
-nums := list.NewComparableList([]int{1,1,2,2,2,3,4,5})
+nums := list.NewComparableList([]int{1, 1, 2, 2, 2, 3, 4, 5})
 
-nums.Max()           // 5
+nums.Max() // 5
 
-nums.Min()           // 1
+nums.Min() // 1
 
-nums.Sum()           // 20
+nums.Sum() // 20
 
-nums.Reverse()       // List {5,4,3,2,2,1,1}
+nums.Reverse() // List[int] {5,4,3,2,2,1,1}
 
-nums.Distinct()      // List {1,2,3,4,5}
+nums.Distinct() // List[int] {1,2,3,4,5}
 
-nums.PartitionAt(3)  // List {1,1,2,2}, List {2,3,4,5}
+nums.SplitAt(3) // List[int] {1,1,2,2}, List[int] {2,3,4,5}
 
-nums.Take(3)         // List {1,1,2} 
+nums.Take(3) // List[int] {1,1,2}
 
-nums.TakeRight(3)    // List {2,3,4}
+nums.TakeRight(3) // List[int] {3,4,5}
 
-nums.Drop(3)         // List {2,3,4,5}
+nums.Drop(3) // List[int] {2,2,3,4,5}
 
-nums.DropRight(3)    // List {1,1,2}
+nums.DropRight(3) // List[int] {1,1,2,2,2}
 
 nums.DropWhile(
-  func(i int) bool { return i<3 } // List [3,4,5]
+  func(i int) bool { return i < 3 }, // List[int] {3,4,5}
 )
+
 nums.Diff(
-  list.NewComparableList([]int{1,2,3}) // List [4,5]
+  list.NewComparableList([]int{1, 2, 3}), // List[int] {4,5}
 )
+
 nums.Count(
-  func(i int) bool { return i>2 } // 3
+  func(i int) bool { return i > 2 }, // 3
 )
 ```
 
@@ -126,28 +128,26 @@ import (
   "github.com/charbz/gophers/pkg/set"
 )
 
-letters := set.NewSet([]string{"A", "B", "C", "A", "C", "A"}) // Set ["A", "B", "C"]
-other := set.NewSet([]string{"A", "B", "D"})
+setA := set.NewSet([]string{"A", "B", "C", "A", "C", "A"}) // Set[string] {"A", "B", "C"}
+setB := set.NewSet([]string{"A", "B", "D"})
 
+setA.Intersection(setB) // Set[string] {"A", "B"}
 
-letters.Intersect(other) // Set ["A", "B"]
+setA.Union(setB) // Set[string] {"A", "B", "C", "D"}
 
-letters.Union(other) // Set ["A", "B", "C", "D"]
+setA.Diff(setB) // Set[string] {"C"}
 
-letters.Diff(other) // Set ["C"]
-
-letters.ForEach(
-  func(s string) { s += "!" } // Set ["A!", "B!", "C!"]
-)
-
-letters.Reduce(
-  func(acc string, i string) string { return acc + "-" + i }, ""  // "A-B-C"
+setA.Apply(
+  func(s string) string {
+    s += "!"
+    return s
+  }, // Set[string] {"A!", "B!", "C!"}
 )
 ```
 
-### Collection Utils
+### Map, Reduce, GroupBy...
 
-You can use these utils on any concrete collection type.
+You can use collection utils such as Map, Reduce, GroupBy, etc on any concrete collection type.
 
 ```go
 import (
@@ -156,34 +156,21 @@ import (
   "github.com/charbz/gophers/pkg/sequence"
 )
 
-type Foo struct {
-  a int
-  b string
-}
+	foos := sequence.NewSequence([]Foo{
+		{a: 1, b: "one"},
+		{a: 2, b: "two"},
+		{a: 3, b: "three"},
+		{a: 4, b: "four"},
+		{a: 5, b: "five"},
+	})
 
-// Create a list of Foo
-foos := list.NewList([]Foo{
-  {a: 1, b: "one"}, 
-  {a: 2, b: "two"}, 
-  {a: 3, b: "three"}, 
-  {a: 4, b: "four"}, 
-  {a: 5, b: "five"}
-})
+	collection.Map(foos, func(f Foo) string { return f.b }) //  ["one", "two", "three", "four", "five"] 
 
-bars := sequence.NewSequence([]Foo{
-  {a: 1, b: "one"}, 
-  {a: 2, b: "two"}
-})
+  collection.Reduce(foos, func(acc string, f Foo) string { return acc + f.b }, "") // "onetwothreefourfive"
 
-collection.Map(foos, func(f Foo) string { return f.b }) // List ["one", "two", "three", "four", "five"]
+	collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
 
-collection.Reduce(bars, func(acc string, f Foo) string { return acc + f.b }, "") // "onetwo"
-
-collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
-
-collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
-
-// There are many more utils, see the docs for more details.
+	collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
 ```
 
 ## Core Features

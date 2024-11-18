@@ -191,7 +191,7 @@ func Intersect[T comparable](s1 Collection[T], s2 Collection[T]) Collection[T] {
 }
 
 // Map takes a collection of type T and a mapping function func(T) K,
-// applies the mapping function to each element and returns a collection of type K.
+// applies the mapping function to each element and returns a slice of type K.
 //
 // example usage:
 //
@@ -203,12 +203,12 @@ func Intersect[T comparable](s1 Collection[T], s2 Collection[T]) Collection[T] {
 // output:
 //
 //	[5,3,6]
-func Map[T, K any](s Collection[T], f func(T) K) Collection[K] {
-	r := s.New().(Collection[K])
+func Map[T, K any](s Collection[T], f func(T) K) []K {
+	k := make([]K, 0, s.Length())
 	for v := range s.Values() {
-		r.Add(f(v))
+		k = append(k, f(v))
 	}
-	return r
+	return k
 }
 
 // MaxBy returns the element in the collection that has the maximum value

@@ -216,11 +216,6 @@ func (c *Sequence[T]) ForAll(f func(T) bool) bool {
 	return collection.ForAll(c, f)
 }
 
-// ForAll is an alias for collection.ForAll
-func (c *Sequence[T]) ForAll(f func(T) bool) bool {
-	return collection.ForAll(c, f)
-}
-
 // Head is an alias for collection.Head
 func (c *Sequence[T]) Head() (T, error) {
 	return collection.Head(c)
@@ -266,10 +261,10 @@ func (c *Sequence[T]) Partition(f func(T) bool) (*Sequence[T], *Sequence[T]) {
 	return left.(*Sequence[T]), right.(*Sequence[T])
 }
 
-// PartitionAt partitions the sequence at the given index.
-func (c *Sequence[T]) PartitionAt(n int) (*Sequence[T], *Sequence[T]) {
-	left := NewSequence(c.elements[:n])
-	right := NewSequence(c.elements[n:])
+// SplitAt splits the sequence at the given index.
+func (c *Sequence[T]) SplitAt(n int) (*Sequence[T], *Sequence[T]) {
+	left := NewSequence(c.elements[:n+1])
+	right := NewSequence(c.elements[n+1:])
 	return left, right
 }
 
@@ -281,12 +276,6 @@ func (c *Sequence[T]) Reverse() *Sequence[T] {
 // String implements the Stringer interface.
 func (c *Sequence[T]) String() string {
 	return fmt.Sprintf("Seq(%T) %v", *new(T), c.elements)
-}
-
-// SplitAt is an alias for collection.SplitAt
-func (c *Sequence[T]) SplitAt(n int) (*Sequence[T], *Sequence[T]) {
-	left, right := collection.SplitAt(c, n)
-	return left.(*Sequence[T]), right.(*Sequence[T])
 }
 
 // Take is an alias for collection.Take
