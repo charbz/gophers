@@ -2,17 +2,12 @@
 
 Gophers is an awesome collections library for Go offering tons of functionality right out of the box.
 
-A collection is a generic interface for data structures containing multiple elements of the same type.
-
 Gophers offers the following collections:
-
 - Sequence
 - ComparableSequence
 - List
 - ComparableList
 - Set
-
-and a ton of utility functions for working with collections.
 
 ## Installation
 ```bash
@@ -158,21 +153,21 @@ import (
   "github.com/charbz/gophers/pkg/sequence"
 )
 
-	foos := sequence.NewSequence([]Foo{
-		{a: 1, b: "one"},
-		{a: 2, b: "two"},
-		{a: 3, b: "three"},
-		{a: 4, b: "four"},
-		{a: 5, b: "five"},
-	})
+foos := sequence.NewSequence([]Foo{
+	{a: 1, b: "one"},
+	{a: 2, b: "two"},
+	{a: 3, b: "three"},
+	{a: 4, b: "four"},
+	{a: 5, b: "five"},
+})
 
-	collection.Map(foos, func(f Foo) string { return f.b }) //  ["one", "two", "three", "four", "five"] 
+collection.Map(foos, func(f Foo) string { return f.b }) //  ["one", "two", "three", "four", "five"] 
 
-  collection.Reduce(foos, func(acc string, f Foo) string { return acc + f.b }, "") // "onetwothreefourfive"
+collection.Reduce(foos, func(acc string, f Foo) string { return acc + f.b }, "") // "onetwothreefourfive"
 
-	collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
+collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
 
-	collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
+collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
 ```
 
 ## Core Features
