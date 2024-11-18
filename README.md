@@ -196,8 +196,9 @@ collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 
 ### Sequence Operations
 
 - `Add(element)` - Append element to sequence
-- `At(index)` - Get element at index
 - `All()` - Get iterator over all elements
+- `At(index)` - Get element at index
+- `Apply(function)` - Apply function to each element
 - `Backward()` - Get reverse iterator over elements
 - `Clone()` - Create shallow copy of sequence
 - `Concat(sequences...)` - Concatenate multiple sequences
@@ -217,7 +218,6 @@ collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 
 - `Find(predicate)` - Find first matching element
 - `FindLast(predicate)` - Find last matching element
 - `ForAll(predicate)` - Test if predicate holds for all elements
-- `ForEach(function)` - Apply function to each element
 - `Head()` - Get first element
 - `Init()` - Get all elements except last
 - `IsEmpty()` - Test if sequence is empty
@@ -259,6 +259,7 @@ Inherits all operations from Sequence, but with the following additional operati
 
 - `Add(element)` - Add element to end
 - `All()` - Get iterator over index/value pairs
+- `Apply(function)` - Apply function to each element
 - `At(index)` - Get element at index
 - `Backward()` - Get reverse iterator over index/value pairs
 - `Clone()` - Create shallow copy
@@ -279,7 +280,6 @@ Inherits all operations from Sequence, but with the following additional operati
 - `Find(predicate)` - Find first matching element
 - `FindLast(predicate)` - Find last matching element
 - `ForAll(predicate)` - Test if predicate holds for all elements
-- `ForEach(function)` - Apply function to each element
 - `Head()` - Get first element
 - `Init()` - Get all elements except last
 - `IsEmpty()` - Test if list is empty
@@ -321,6 +321,7 @@ Inherits all operations from List, but with the following additional operations:
 ### Set Operations
 
 - `Add(element)` - Add element to set
+- `Apply(function)` - Apply function to each element
 - `Clone()` - Create shallow copy of set
 - `Contains(value)` - Test if set contains value
 - `ContainsFunc(predicate)` - Test if set contains element matching predicate
@@ -330,7 +331,6 @@ Inherits all operations from List, but with the following additional operations:
 - `Filter(predicate)` - Filter elements based on predicate
 - `FilterNot(predicate)` - Inverse filter operation
 - `ForAll(predicate)` - Test if predicate holds for all elements
-- `ForEach(function)` - Apply function to each element
 - `Intersection(set)` - Get elements present in both sets
 - `IsEmpty()` - Test if set is empty
 - `Length()` - Get number of elements
@@ -354,7 +354,6 @@ These operations are available on all collections, including Sequence, List, and
 - `Filter(predicate)` - Filter elements based on predicate
 - `FilterNot(predicate)` - Inverse filter operation
 - `ForAll(predicate)` - Test if predicate holds for all elements
-- `ForEach(function)` - Apply function to each element
 - `GroupBy(function)` - Group elements by key function
 - `Head()` - Get first element
 - `Init()` - Get all elements except last

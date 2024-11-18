@@ -216,6 +216,11 @@ func (c *Sequence[T]) ForAll(f func(T) bool) bool {
 	return collection.ForAll(c, f)
 }
 
+// ForAll is an alias for collection.ForAll
+func (c *Sequence[T]) ForAll(f func(T) bool) bool {
+	return collection.ForAll(c, f)
+}
+
 // Head is an alias for collection.Head
 func (c *Sequence[T]) Head() (T, error) {
 	return collection.Head(c)
