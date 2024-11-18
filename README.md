@@ -2,14 +2,17 @@
 
 Gophers is an awesome collections library for Go offering tons of functionality right out of the box.
 
-A collection is a generic interface of common operations like (Filter, Map, Reduce, Partition, etc.) implemented by:
+A collection is a generic interface for data structures containing multiple elements of the same type.
+
+Gophers offers the following collections:
+
 - Sequence
 - ComparableSequence
 - List
 - ComparableList
 - Set
 
-Here are some examples of what you can do:
+and a ton of utility functions for working with collections.
 
 ## Installation
 ```bash
@@ -19,6 +22,8 @@ go get github.com/charbz/gophers
 ## Quick Start
 
 ### Using Generic Data Types
+
+Here are some examples of what you can do:
 
 ```go
 import (
@@ -30,7 +35,6 @@ type Foo struct {
   b string
 }
 
-// Create a list of Foo
 foos := list.NewList([]Foo{
   {a: 1, b: "one"}, 
   {a: 2, b: "two"}, 
@@ -39,45 +43,43 @@ foos := list.NewList([]Foo{
   {a: 5, b: "five"},
 })
 
-foos.Filter(
-  func(f Foo) bool { return f.a%2 == 0 }, // List[Foo] {{2 two},{4 four}}
-)
+foos.Filter(func(f Foo) bool { return f.a%2 == 0 }) 
+// List[Foo] {{2 two} {4 four}}
 
-foos.FilterNot(
-  func(f Foo) bool { return f.a%2 == 0 }, // List[Foo] {{1 one},{3 three},{5 five}}
-)
+foos.FilterNot(func(f Foo) bool { return f.a%2 == 0 }) 
+// List[Foo] {{1 one} {3 three} {5 five}}
 
-foos.Partition(
-  func(f Foo) bool { return len(f.b) == 3 }, // List[Foo] {{1 one},{2 two}} , List[Foo] {{3 three},{4 four},{5 five}}
-)
+foos.Find(func(f Foo) bool { return f.a == 3 }) 
+// {a: 3, b: "three"}
 
-foos.SplitAt(3) // List[Foo] {{1 one},{2 two},{3 three},{4 four}} , List[Foo] {{5 five}}
+foos.Partition(func(f Foo) bool { return len(f.b) == 3 })
+// List[Foo] {{1 one} {2 two}} , List[Foo] {{3 three} {4 four} {5 five}}
 
-foos.Count(
-  func(f Foo) bool { return f.a < 3 }, // 2
-)
+foos.SplitAt(3) 
+// List[Foo] {{1 one} {2 two} {3 three} {4 four}} , List[Foo] {{5 five}}
 
-bars := foos.Concat(
-  list.NewList([]Foo{{a: 1, b: "one"}, {a: 2, b: "two"}}), // List[Foo] {{1 one} {2 two} {3 three} {4 four} {5 five} {1 one} {2 two}}
-)
+foos.Count(func(f Foo) bool { return f.a < 3 }) 
+// 2
 
-bars.Distinct(
-  func(i Foo, j Foo) bool { return i.a == j.a }, // List[Foo] {{1 one} {2 two} {3 three} {4 four} {5 five}}
-)
+bars := foos.Concat(list.NewList([]Foo{{a: 1, b: "one"}, {a: 2, b: "two"}})) 
+// List[Foo] {{1 one} {2 two} {3 three} {4 four} {5 five} {1 one} {2 two}}
+
+bars.Distinct(func(i Foo, j Foo) bool { return i.a == j.a }) 
+// List[Foo] {{1 one} {2 two} {3 three} {4 four} {5 five}}
 
 foos.Apply(
   func(f Foo) Foo {
     f.a *= 2
     f.b += " * two"
     return f
-  },
-) // List[Foo] {{2 one * two} {4 two * two} {6 three * two} {8 four * two} {10 five * two}}
+  }
+)
+// List[Foo] {{2 one * two} {4 two * two} {6 three * two} {8 four * two} {10 five * two}}
 ```
 
 ### Comparable Collections
 
-Comparable collections are collections who's elements can be compared to each other using equality.
-A ComparableList inherits all the operations from List, but with additional convenience methods.
+Comparable collections are collections with elements that can be compared to each other.
 
 ```go
 import (
@@ -92,9 +94,9 @@ nums.Min() // 1
 
 nums.Sum() // 20
 
-nums.Reverse() // List[int] {5,4,3,2,2,1,1}
-
 nums.Distinct() // List[int] {1,2,3,4,5}
+
+nums.Reverse() // List[int] {5,4,3,2,2,1,1}
 
 nums.SplitAt(3) // List[int] {1,1,2,2}, List[int] {2,3,4,5}
 
@@ -119,9 +121,9 @@ nums.Count(
 )
 ```
 
-### Basic Sets
+### Sets
 
-Sets are collections of unique elements. Sets inherit all operations from Collection, and have a few additional convenience methods for set operations.
+Sets are collections of unique elements. Sets also implement the Collection interface, and offer additional methods for set operations.
 
 ```go
 import (
@@ -147,7 +149,7 @@ setA.Apply(
 
 ### Map, Reduce, GroupBy...
 
-You can use collection utils such as Map, Reduce, GroupBy, etc on any concrete collection type.
+You can use package functions such as Map, Reduce, GroupBy, etc on any concrete collection type.
 
 ```go
 import (
@@ -177,7 +179,9 @@ import (
 
 - **Collection** : A generic collection interface providing common operations for all concrete collections.
 - **Sequence** : An ordered collection wrapping a Go slice. Great for fast random access.
+- **ComparableSequence** : An ordered collection with elements that can be compared to each other.
 - **List** : An ordered collection wrapping a linked list. Great for fast insertion and removal, implementing queues and stacks.
+- **ComparableList** : An ordered collection with elements that can be compared to each other.
 - **Set** : A hash set implementation.
 
 ### Sequence Operations
