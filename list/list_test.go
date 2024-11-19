@@ -1,9 +1,8 @@
 package list
 
 import (
+	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestList_Head(t *testing.T) {
@@ -32,10 +31,16 @@ func TestList_Head(t *testing.T) {
 			l := NewList(tt.slice)
 			got, err := l.Head()
 			if tt.wantErr {
-				assert.Error(t, err)
+				if err == nil {
+					t.Errorf("Head() = %v, want error", got)
+				}
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
+				if err != nil {
+					t.Errorf("Head() = %v, want no error", got)
+				}
+				if got != tt.want {
+					t.Errorf("Head() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
@@ -78,7 +83,9 @@ func TestList_Drop(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Drop(tt.n)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Drop() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -120,7 +127,9 @@ func TestList_DropRight(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.DropRight(tt.n)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("DropRight() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -150,7 +159,9 @@ func TestList_Contains(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Contains(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Contains() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -191,8 +202,12 @@ func TestList_Find(t *testing.T) {
 			l := NewList(tt.slice)
 			index, value := l.Find(tt.predicate)
 
-			assert.Equal(t, tt.index, index)
-			assert.Equal(t, tt.value, value)
+			if index != tt.index {
+				t.Errorf("Find() index = %v, want %v", index, tt.index)
+			}
+			if value != tt.value {
+				t.Errorf("Find() value = %v, want %v", value, tt.value)
+			}
 		})
 	}
 }
@@ -219,7 +234,9 @@ func TestList_Length(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Length()
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Length() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -254,7 +271,9 @@ func TestConcat(t *testing.T) {
 			}
 
 			result := l.Concat(lists...)
-			assert.Equal(t, tt.want, result.ToSlice())
+			if !slices.Equal(result.ToSlice(), tt.want) {
+				t.Errorf("Concat() = %v, want %v", result.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -286,7 +305,9 @@ func TestList_Distinct(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Distinct(func(a, b int) bool { return a == b })
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Distinct() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -322,7 +343,9 @@ func TestList_DropWhile(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.DropWhile(tt.predicate)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("DropWhile() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -363,7 +386,9 @@ func TestList_Equals(t *testing.T) {
 			l1 := NewList(tt.list1)
 			l2 := NewList(tt.list2)
 			got := l1.Equals(l2, tt.equals)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Equals() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -399,7 +424,9 @@ func TestList_Filter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Filter(tt.predicate)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Filter() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -435,7 +462,9 @@ func TestList_FilterNot(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.FilterNot(tt.predicate)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("FilterNot() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -475,8 +504,12 @@ func TestList_FindLast(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			gotIndex, gotValue := l.FindLast(tt.predicate)
-			assert.Equal(t, tt.wantIndex, gotIndex)
-			assert.Equal(t, tt.wantValue, gotValue)
+			if gotIndex != tt.wantIndex {
+				t.Errorf("FindLast() index = %v, want %v", gotIndex, tt.wantIndex)
+			}
+			if gotValue != tt.wantValue {
+				t.Errorf("FindLast() value = %v, want %v", gotValue, tt.wantValue)
+			}
 		})
 	}
 }
@@ -508,7 +541,9 @@ func TestList_Init(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Init()
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Init() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -539,10 +574,16 @@ func TestList_Last(t *testing.T) {
 			l := NewList(tt.slice)
 			got, err := l.Last()
 			if tt.wantErr {
-				assert.Error(t, err)
+				if err == nil {
+					t.Errorf("Last() error = nil, want error")
+				}
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
+				if err != nil {
+					t.Errorf("Last() error = %v, want no error", err)
+				}
+				if got != tt.want {
+					t.Errorf("Last() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
@@ -583,8 +624,12 @@ func TestList_Partition(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			left, right := l.Partition(tt.predicate)
-			assert.Equal(t, tt.wantLeft, left.ToSlice())
-			assert.Equal(t, tt.wantRight, right.ToSlice())
+			if !slices.Equal(left.ToSlice(), tt.wantLeft) {
+				t.Errorf("Partition() left = %v, want %v", left.ToSlice(), tt.wantLeft)
+			}
+			if !slices.Equal(right.ToSlice(), tt.wantRight) {
+				t.Errorf("Partition() right = %v, want %v", right.ToSlice(), tt.wantRight)
+			}
 		})
 	}
 }
@@ -616,7 +661,9 @@ func TestList_Reverse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Reverse()
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Reverse() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -656,8 +703,12 @@ func TestList_SplitAt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			left, right := l.SplitAt(tt.n)
-			assert.Equal(t, tt.wantLeft, left.ToSlice())
-			assert.Equal(t, tt.wantRight, right.ToSlice())
+			if !slices.Equal(left.ToSlice(), tt.wantLeft) {
+				t.Errorf("SplitAt() left = %v, want %v", left.ToSlice(), tt.wantLeft)
+			}
+			if !slices.Equal(right.ToSlice(), tt.wantRight) {
+				t.Errorf("SplitAt() right = %v, want %v", right.ToSlice(), tt.wantRight)
+			}
 		})
 	}
 }
@@ -693,7 +744,9 @@ func TestList_Take(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Take(tt.n)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Take() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -729,7 +782,9 @@ func TestList_TakeRight(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.TakeRight(tt.n)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("TakeRight() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -761,7 +816,9 @@ func TestList_Tail(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewList(tt.slice)
 			got := l.Tail()
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Tail() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }

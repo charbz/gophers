@@ -1,9 +1,8 @@
 package collection
 
 import (
+	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCount(t *testing.T) {
@@ -20,7 +19,9 @@ func TestCount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.count, Count(NewMockCollection(tt.input), countEvens))
+			if got := Count(NewMockCollection(tt.input), countEvens); got != tt.count {
+				t.Errorf("Count() = %v, want %v", got, tt.count)
+			}
 		})
 	}
 }
@@ -35,11 +36,15 @@ func TestDiff(t *testing.T) {
 		{name: "diff", A: []int{1, 2, 3, 4, 5, 6}, B: []int{2, 4, 6, 8, 10, 12}, diff: []int{1, 3, 5}},
 		{name: "diff with empty B", A: []int{1, 2, 3, 4, 5, 6}, B: []int{}, diff: []int{1, 2, 3, 4, 5, 6}},
 		{name: "diff with empty A", A: []int{}, B: []int{1, 2, 3, 4, 5, 6}, diff: nil},
-		{name: "diff with same elements", A: []int{1, 2, 3, 4, 5, 6}, B: []int{1, 2, 3, 4, 5, 6}, diff: nil},
+		{name: "diff with same elements", A: []int{1, 2, 3, 4, 3, 6}, B: []int{1, 2, 3, 4, 5, 6}, diff: nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, NewMockCollection(tt.diff), Diff(NewMockCollection(tt.A), NewMockCollection(tt.B)))
+			got := Diff(NewMockCollection(tt.A), NewMockCollection(tt.B)).(*MockCollection[int]).items
+			want := NewMockCollection(tt.diff).items
+			if !slices.Equal(got, want) {
+				t.Errorf("Diff() = %v, want %v", got, want)
+			}
 		})
 	}
 }
@@ -79,8 +84,9 @@ func TestReduce(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := Reduce(NewMockCollection(tt.input), tt.reducer, tt.init)
-			assert.Equal(t, tt.expected, result)
+			if got := Reduce(NewMockCollection(tt.input), tt.reducer, tt.init); got != tt.expected {
+				t.Errorf("Reduce() = %v, want %v", got, tt.expected)
+			}
 		})
 	}
 }
@@ -112,7 +118,10 @@ func TestFilter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Filter(NewMockCollection(tt.input), isEven)
-			assert.Equal(t, NewMockCollection(tt.want), got)
+			want := NewMockCollection(tt.want)
+			if !slices.Equal(got.(*MockCollection[int]).items, want.items) {
+				t.Errorf("Filter() = %v, want %v", got, want)
+			}
 		})
 	}
 }
@@ -144,7 +153,10 @@ func TestFilterNot(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := FilterNot(NewMockCollection(tt.input), isEven)
-			assert.Equal(t, NewMockCollection(tt.want), got)
+			want := NewMockCollection(tt.want)
+			if !slices.Equal(got.(*MockCollection[int]).items, want.items) {
+				t.Errorf("FilterNot() = %v, want %v", got, want)
+			}
 		})
 	}
 }
@@ -175,8 +187,9 @@ func TestForAll(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := ForAll(NewMockCollection(tt.input), isLessThan10)
-			assert.Equal(t, tt.expected, result)
+			if got := ForAll(NewMockCollection(tt.input), isLessThan10); got != tt.expected {
+				t.Errorf("ForAll() = %v, want %v", got, tt.expected)
+			}
 		})
 	}
 }
@@ -207,7 +220,11 @@ func TestGroupBy(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := GroupBy(NewMockCollection(tt.input), modTwo)
 			for k, v := range tt.expected {
-				assert.Equal(t, NewMockCollection(v), result[k])
+				want := NewMockCollection(v)
+				got := result[k]
+				if !slices.Equal(got.(*MockCollection[int]).items, want.items) {
+					t.Errorf("GroupBy()[%v] = %v, want %v", k, got, want)
+				}
 			}
 		})
 	}
@@ -243,7 +260,10 @@ func TestIntersect(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Intersect(NewMockCollection(tt.a), NewMockCollection(tt.b))
-			assert.Equal(t, NewMockCollection(tt.want), got)
+			want := NewMockCollection(tt.want)
+			if !slices.Equal(got.(*MockCollection[int]).items, want.items) {
+				t.Errorf("Intersect() = %v, want %v", got, want)
+			}
 		})
 	}
 }
@@ -270,7 +290,9 @@ func TestMap(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Map(NewMockCollection(tt.input), double)
-			assert.Equal(t, tt.want, got)
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("Map() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -306,8 +328,12 @@ func TestMaxBy(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			value, err := MaxBy(NewMockCollection(tt.input), identity)
-			assert.Equal(t, tt.expectedValue, value)
-			assert.Equal(t, tt.expectedErr, err)
+			if value != tt.expectedValue {
+				t.Errorf("MaxBy() value = %v, want %v", value, tt.expectedValue)
+			}
+			if err != tt.expectedErr {
+				t.Errorf("MaxBy() error = %v, want %v", err, tt.expectedErr)
+			}
 		})
 	}
 }
@@ -343,8 +369,12 @@ func TestMinBy(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			value, err := MinBy(NewMockCollection(tt.input), identity)
-			assert.Equal(t, tt.expectedValue, value)
-			assert.Equal(t, tt.expectedErr, err)
+			if value != tt.expectedValue {
+				t.Errorf("MinBy() value = %v, want %v", value, tt.expectedValue)
+			}
+			if err != tt.expectedErr {
+				t.Errorf("MinBy() error = %v, want %v", err, tt.expectedErr)
+			}
 		})
 	}
 }
@@ -374,8 +404,26 @@ func TestPartition(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			match, rest := Partition(NewMockCollection(tt.input), isEven)
-			assert.Equal(t, NewMockCollection(tt.wantMatch), match)
-			assert.Equal(t, NewMockCollection(tt.wantRest), rest)
+			wantMatch := NewMockCollection(tt.wantMatch)
+			wantRest := NewMockCollection(tt.wantRest)
+
+			if len(match.(*MockCollection[int]).items) != len(wantMatch.items) {
+				t.Errorf("Partition() match = %v, want %v", match, wantMatch)
+			}
+			for i := range wantMatch.items {
+				if match.(*MockCollection[int]).items[i] != wantMatch.items[i] {
+					t.Errorf("Partition() match = %v, want %v", match, wantMatch)
+				}
+			}
+
+			if len(rest.(*MockCollection[int]).items) != len(wantRest.items) {
+				t.Errorf("Partition() rest = %v, want %v", rest, wantRest)
+			}
+			for i := range wantRest.items {
+				if rest.(*MockCollection[int]).items[i] != wantRest.items[i] {
+					t.Errorf("Partition() rest = %v, want %v", rest, wantRest)
+				}
+			}
 		})
 	}
 }

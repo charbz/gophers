@@ -5,8 +5,6 @@ import (
 	"math/rand"
 	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 // MockOrderedCollection implements the OrderedCollection interface for testing purposes
@@ -69,5 +67,7 @@ func (m *MockOrderedCollection[T]) New(s ...[]T) Collection[T] {
 
 func TestMockOrderedCollectionImplementsOrderedCollection(t *testing.T) {
 	var m OrderedCollection[string] = NewMockOrderedCollection([]string{"a", "b", "c"})
-	assert.Equal(t, 3, m.Length())
+	if m.Length() != 3 {
+		t.Errorf("Length() = %v, want %v", m.Length(), 3)
+	}
 }

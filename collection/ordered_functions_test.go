@@ -2,9 +2,8 @@ package collection
 
 import (
 	"fmt"
+	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCorresponds(t *testing.T) {
@@ -22,7 +21,10 @@ func TestCorresponds(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			assert.Equal(t, tt.correspond, Corresponds(NewMockOrderedCollection(tt.A), NewMockOrderedCollection(tt.B), isInverse))
+			got := Corresponds(NewMockOrderedCollection(tt.A), NewMockOrderedCollection(tt.B), isInverse)
+			if got != tt.correspond {
+				t.Errorf("Corresponds() = %v, want %v", got, tt.correspond)
+			}
 		})
 	}
 }
@@ -70,7 +72,9 @@ func TestDrop(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewMockOrderedCollection(tt.slice)
 			got := Drop(c, tt.n)
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("Drop() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 
@@ -112,8 +116,10 @@ func TestFind(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			index, value := Find(NewMockOrderedCollection(tt.input), tt.finder)
-			assert.Equal(t, tt.expectedIndex, index)
-			assert.Equal(t, tt.expectedValue, value)
+			if index != tt.expectedIndex || value != tt.expectedValue {
+				t.Errorf("Find() = %v, want %v", index, tt.expectedIndex)
+				t.Errorf("Find() = %v, want %v", value, tt.expectedValue)
+			}
 		})
 	}
 }
@@ -161,7 +167,9 @@ func TestDropRight(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewMockOrderedCollection(tt.slice)
 			got := DropRight(c, tt.n)
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("DropRight() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -198,7 +206,9 @@ func TestDropWhile(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := DropWhile(NewMockOrderedCollection(tt.input), isLessThan4)
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("DropWhile() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -234,8 +244,10 @@ func TestFindLast(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			index, value := FindLast(NewMockOrderedCollection(tt.input), isLessThan6)
-			assert.Equal(t, tt.expectedIndex, index)
-			assert.Equal(t, tt.expectedValue, value)
+			if index != tt.expectedIndex || value != tt.expectedValue {
+				t.Errorf("FindLast() = %v, want %v", index, tt.expectedIndex)
+				t.Errorf("FindLast() = %v, want %v", value, tt.expectedValue)
+			}
 		})
 	}
 }
@@ -264,8 +276,10 @@ func TestHead(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			value, err := Head(NewMockOrderedCollection(tt.input))
-			assert.Equal(t, tt.expectedValue, value)
-			assert.Equal(t, tt.expectedErr, err)
+			if value != tt.expectedValue || err != tt.expectedErr {
+				t.Errorf("Head() = %v, want %v", value, tt.expectedValue)
+				t.Errorf("Head() = %v, want %v", err, tt.expectedErr)
+			}
 		})
 	}
 }
@@ -296,7 +310,9 @@ func TestInit(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Init(NewMockOrderedCollection(tt.input))
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("Init() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -325,8 +341,10 @@ func TestLast(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			value, err := Last(NewMockOrderedCollection(tt.input))
-			assert.Equal(t, tt.expectedValue, value)
-			assert.Equal(t, tt.expectedErr, err)
+			if value != tt.expectedValue || err != tt.expectedErr {
+				t.Errorf("Last() = %v, want %v", value, tt.expectedValue)
+				t.Errorf("Last() = %v, want %v", err, tt.expectedErr)
+			}
 		})
 	}
 }
@@ -357,7 +375,9 @@ func TestReverse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Reverse(NewMockOrderedCollection(tt.input))
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("Reverse() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -388,7 +408,9 @@ func TestReduceRight(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := ReduceRight(NewMockOrderedCollection(tt.input), concat, tt.init)
-			assert.Equal(t, tt.expected, result)
+			if result != tt.expected {
+				t.Errorf("ReduceRight() = %v, want %v", result, tt.expected)
+			}
 		})
 	}
 }
@@ -415,7 +437,9 @@ func TestReverseMap(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := ReverseMap(NewMockOrderedCollection(tt.input), double)
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("ReverseMap() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -446,7 +470,9 @@ func TestTail(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Tail(NewMockOrderedCollection(tt.input))
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("Tail() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -487,7 +513,9 @@ func TestTake(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Take(NewMockOrderedCollection(tt.input), tt.n)
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("Take() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }
@@ -528,7 +556,9 @@ func TestTakeRight(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := TakeRight(NewMockOrderedCollection(tt.input), tt.n)
-			assert.Equal(t, NewMockOrderedCollection(tt.want), got)
+			if !slices.Equal(got.(*MockOrderedCollection[int]).items, tt.want) {
+				t.Errorf("TakeRight() = %v, want %v", got, NewMockOrderedCollection(tt.want))
+			}
 		})
 	}
 }

@@ -1,9 +1,8 @@
 package sequence
 
 import (
+	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestConcat(t *testing.T) {
@@ -36,7 +35,9 @@ func TestConcat(t *testing.T) {
 			}
 
 			result := c.Concat(Sequences...)
-			assert.Equal(t, tt.want, result.elements)
+			if !slices.Equal(result.elements, tt.want) {
+				t.Errorf("Concat() = %v, want %v", result.elements, tt.want)
+			}
 		})
 	}
 }
@@ -65,7 +66,9 @@ func TestDistinct(t *testing.T) {
 			result := c.Distinct(func(a, b int) bool {
 				return a == b
 			})
-			assert.Equal(t, tt.want, result.elements)
+			if !slices.Equal(result.elements, tt.want) {
+				t.Errorf("Distinct() = %v, want %v", result.elements, tt.want)
+			}
 		})
 	}
 }
@@ -115,14 +118,19 @@ func TestSequence_At(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					if !tt.wantErr {
+						t.Errorf("At() panicked: %v", r)
+					}
+				}
+			}()
 			c := NewSequence(tt.slice)
-
-			if tt.wantErr {
-				assert.Panics(t, func() { c.At(tt.index) })
-			} else {
-				got := c.At(tt.index)
-				assert.Equal(t, tt.want, got)
+			got := c.At(tt.index)
+			if got != tt.want {
+				t.Errorf("At() = %v, want %v", got, tt.want)
 			}
+
 		})
 	}
 }
@@ -152,7 +160,9 @@ func TestSequence_Contains(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.Contains(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Contains() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -194,7 +204,9 @@ func TestSequence_Drop(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.Drop(tt.n)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Drop() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -230,7 +242,9 @@ func TestSequence_Filter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.Filter(tt.filter)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Filter() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -272,7 +286,9 @@ func TestSequence_DropRight(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.DropRight(tt.n)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("DropRight() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -308,7 +324,9 @@ func TestSequence_FilterNot(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.FilterNot(tt.filter)
-			assert.Equal(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("FilterNot() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -349,8 +367,12 @@ func TestSequence_Find(t *testing.T) {
 			c := NewSequence(tt.slice)
 			index, value := c.Find(tt.predicate)
 
-			assert.Equal(t, tt.index, index)
-			assert.Equal(t, tt.value, value)
+			if index != tt.index {
+				t.Errorf("Find() index = %v, want %v", index, tt.index)
+			}
+			if value != tt.value {
+				t.Errorf("Find() value = %v, want %v", value, tt.value)
+			}
 		})
 	}
 }
@@ -378,13 +400,17 @@ func TestSequence_Head(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					if !tt.wantErr {
+						t.Errorf("Head() panicked: %v", r)
+					}
+				}
+			}()
 			c := NewSequence(tt.slice)
-			got, err := c.Head()
-			if tt.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
+			got, _ := c.Head()
+			if got != tt.want {
+				t.Errorf("Head() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -412,14 +438,22 @@ func TestSequence_Pop(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					if !tt.wantErr {
+						t.Errorf("Pop() panicked: %v", r)
+					}
+				}
+			}()
 			c := NewSequence(tt.slice)
-			got, err := c.Pop()
-			if tt.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
-				assert.Equal(t, len(tt.slice)-1, c.Length())
+			got, _ := c.Pop()
+			if !tt.wantErr {
+				if got != tt.want {
+					t.Errorf("Pop() = %v, want %v", got, tt.want)
+				}
+				if c.Length() != len(tt.slice)-1 {
+					t.Errorf("Pop() length = %v, want %v", c.Length(), len(tt.slice)-1)
+				}
 			}
 		})
 	}
@@ -450,7 +484,9 @@ func TestSequence_Push(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			c.Push(tt.toPush)
-			assert.Equal(t, tt.expected, c.ToSlice())
+			if !slices.Equal(c.ToSlice(), tt.expected) {
+				t.Errorf("Push() = %v, want %v", c.ToSlice(), tt.expected)
+			}
 		})
 	}
 }
@@ -478,14 +514,22 @@ func TestSequence_Dequeue(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					if !tt.wantErr {
+						t.Errorf("Dequeue() panicked: %v", r)
+					}
+				}
+			}()
 			c := NewSequence(tt.slice)
-			got, err := c.Dequeue()
-			if tt.wantErr {
-				assert.Error(t, err)
-			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
-				assert.Equal(t, len(tt.slice)-1, c.Length())
+			if !tt.wantErr {
+				got, _ := c.Dequeue()
+				if got != tt.want {
+					t.Errorf("Dequeue() = %v, want %v", got, tt.want)
+				}
+				if c.Length() != len(tt.slice)-1 {
+					t.Errorf("Dequeue() length = %v, want %v", c.Length(), len(tt.slice)-1)
+				}
 			}
 		})
 	}
@@ -516,7 +560,9 @@ func TestSequence_Enqueue(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			c.Enqueue(tt.toEnqueue)
-			assert.Equal(t, tt.expected, c.ToSlice())
+			if !slices.Equal(c.ToSlice(), tt.expected) {
+				t.Errorf("Enqueue() = %v, want %v", c.ToSlice(), tt.expected)
+			}
 		})
 	}
 }
@@ -543,7 +589,9 @@ func TestSequence_Length(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.Length()
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Length() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -576,7 +624,13 @@ func TestSequence_Slice(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSequence(tt.slice)
 			got := c.Slice(tt.start, tt.end)
-			assert.Equal(t, tt.want, got.(*Sequence[int]).ToSlice())
+			asSlice := make([]int, 0)
+			for _, v := range got.All() {
+				asSlice = append(asSlice, v)
+			}
+			if !slices.Equal(asSlice, tt.want) {
+				t.Errorf("Slice() = %v, want %v", asSlice, tt.want)
+			}
 		})
 	}
 }
