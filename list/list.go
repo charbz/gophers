@@ -19,7 +19,7 @@ import (
 	"iter"
 	"math/rand"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 type Node[T any] struct {

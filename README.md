@@ -24,7 +24,7 @@ go get github.com/charbz/gophers
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/list"
+  "github.com/charbz/gophers/list"
 )
 
 type Foo struct {
@@ -81,7 +81,7 @@ They offer all the same functionality as an ordered collection but provide addit
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/list"
+  "github.com/charbz/gophers/list"
 )
 
 nums := list.NewComparableList([]int{1, 1, 2, 2, 2, 3, 4, 5})
@@ -126,7 +126,7 @@ but provide additional methods for set operations.
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/set"
+  "github.com/charbz/gophers/set"
 )
 
 setA := set.NewSet([]string{"A", "B", "C", "A", "C", "A"}) // Set[string] {"A", "B", "C"}
@@ -152,9 +152,9 @@ You can use package functions such as Map, Reduce, GroupBy, and many more on any
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/collection"
-  "github.com/charbz/gophers/pkg/list"
-  "github.com/charbz/gophers/pkg/sequence"
+  "github.com/charbz/gophers/collection"
+  "github.com/charbz/gophers/list"
+  "github.com/charbz/gophers/sequence"
 )
 
 foos := sequence.NewSequence([]Foo{

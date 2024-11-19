@@ -15,7 +15,7 @@ import (
 	"iter"
 	"maps"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 type Set[T comparable] struct {

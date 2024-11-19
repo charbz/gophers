@@ -19,7 +19,7 @@ import (
 	"math/rand"
 	"slices"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 type Sequence[T any] struct {
