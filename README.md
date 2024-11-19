@@ -1,24 +1,24 @@
 # Gophers - The generic collections library for Go
 
-Gophers is an awesome collections library for Go offering tons of functionality right out of the box.
+Gophers is an awesome collections library for Go offering tons of utilities right out of the box.
 
-Gophers offers the following collections:
-- Sequence
-- ComparableSequence
-- List
-- ComparableList
-- Set
+Collection Types:
+- **Sequence** : An ordered collection wrapping a Go slice. Great for fast random access.
+- **ComparableSequence** : A Sequence of elements that can be compared to each other.
+- **List** : An ordered collection wrapping a linked list. Great for fast insertion / removal, and implementing stacks and queues.
+- **ComparableList** : A List of elements that can be compared to each other.
+- **Set** : A hash set of unique elements.
 
-## Installation
+Here's a few examples of what you can do:
+
+## Quick Start
+
+### Installation
 ```bash
 go get github.com/charbz/gophers
 ```
 
-## Quick Start
-
 ### Using Generic Data Types
-
-Here are some examples of what you can do:
 
 ```go
 import (
@@ -75,6 +75,7 @@ foos.Apply(
 ### Comparable Collections
 
 Comparable collections are collections with elements that can be compared to each other.
+They offer all the same functionality as an ordered collection but provide additional convenience methods.
 
 ```go
 import (
@@ -118,7 +119,8 @@ nums.Count(
 
 ### Sets
 
-Sets are collections of unique elements. Sets also implement the Collection interface, and offer additional methods for set operations.
+Sets are collections of unique elements. They offer all the same functionality as an unordered collection
+but provide additional methods for set operations.
 
 ```go
 import (
@@ -144,7 +146,7 @@ setA.Apply(
 
 ### Map, Reduce, GroupBy...
 
-You can use package functions such as Map, Reduce, GroupBy, etc on any concrete collection type.
+You can use package functions such as Map, Reduce, GroupBy, and many more on any concrete collection type.
 
 ```go
 import (
@@ -170,24 +172,15 @@ collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
 collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
 ```
 
-## Core Features
-
-- **Collection** : A generic collection interface providing common operations for all concrete collections.
-- **Sequence** : An ordered collection wrapping a Go slice. Great for fast random access.
-- **ComparableSequence** : An ordered collection with elements that can be compared to each other.
-- **List** : An ordered collection wrapping a linked list. Great for fast insertion and removal, implementing queues and stacks.
-- **ComparableList** : An ordered collection with elements that can be compared to each other.
-- **Set** : A hash set implementation.
-
 ### Sequence Operations
 
 - `Add(element)` - Append element to sequence
 - `All()` - Get iterator over all elements
 - `At(index)` - Get element at index
-- `Apply(function)` - Apply function to each element
+- `Apply(function)` - Apply function to each element (mutates the original collection)
 - `Backward()` - Get reverse iterator over elements
 - `Clone()` - Create shallow copy of sequence
-- `Concat(sequences...)` - Concatenate multiple sequences
+- `Concat(sequences...)` - returns a new sequence containing the concatenated sequences
 - `Contains(predicate)` - Test if any element matches predicate
 - `Corresponds(sequence, function)` - Test element-wise correspondence
 - `Count(predicate)` - Count elements matching predicate
