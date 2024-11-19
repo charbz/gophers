@@ -180,7 +180,7 @@ collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 
 - `Apply(function)` - Apply function to each element (mutates the original collection)
 - `Backward()` - Get reverse iterator over elements
 - `Clone()` - Create shallow copy of sequence
-- `Concat(sequences...)` - returns a new sequence containing the concatenated sequences
+- `Concat(sequences...)` - Concatenates any passed sequences
 - `Contains(predicate)` - Test if any element matches predicate
 - `Corresponds(sequence, function)` - Test element-wise correspondence
 - `Count(predicate)` - Count elements matching predicate
@@ -324,35 +324,41 @@ Inherits all operations from List, but with the following additional operations:
 - `Values()` - Get iterator over values
 
 
-### Collection Operations
+### Collection Functions
 
-These operations are available on all collections, including Sequence, List, and Set.
-
-- `Count(predicate)` - Count elements matching predicate
+The following package functions can be called on any collection, including Sequence, ComparableSequence, List, ComparableList, and Set.
+- `Count(collection, predicate)` - Count elements matching predicate
 - `Diff(collection)` - Get elements in first collection but not in second
-- `Filter(predicate)` - Filter elements based on predicate
-- `FilterNot(predicate)` - Inverse filter operation
-- `ForAll(predicate)` - Test if predicate holds for all elements
-- `GroupBy(function)` - Group elements by key function
-- `Head()` - Get first element
-- `Init()` - Get all elements except last
-- `Intersect(collection)` - Get elements present in both collections
-- `Last()` - Get last element
-- `Map(function)` - Transform elements using function
-- `MaxBy(function)` - Get maximum element by comparison function
-- `MinBy(function)` - Get minimum element by comparison function
-- `Partition(predicate)` - Split collection based on predicate
-- `Reduce(function, initial)` - Reduce collection to single value
-- `ReduceRight(function, initial)` - Right-to-left reduction
-- `Reverse()` - Reverse order of elements
-- `ReverseMap(function)` - Map elements in reverse order
-- `SplitAt(n)` - Split collection at index n
-- `Tail()` - Get all elements except first
-- `Take(n)` - Get first n elements
-- `TakeRight(n)` - Get last n elements
-- `Drop(n)` - Drop first n elements
-- `DropRight(n)` - Drop last n elements
-- `DropWhile(predicate)` - Drop elements while predicate is true
+- `Distinct(collection, function)` - Get unique elements
+- `Filter(collection, predicate)` - Filter elements based on predicate
+- `FilterNot(collection, predicate)` - Inverse filter operation
+- `ForAll(collection, predicate)` - Test if predicate holds for all elements
+- `GroupBy(collection, function)` - Group elements by key function
+- `Intersect(collection1, collection2)` - Get elements present in both collections
+- `Map(collection, function)` - Transform elements using function
+- `MaxBy(collection, function)` - Get maximum element by comparison function
+- `MinBy(collection, function)` - Get minimum element by comparison function
+- `Partition(collection, predicate)` - Split collection based on predicate
+- `Reduce(collection, function, initial)` - Reduce collection to single value
+
+The package functions below can be called on ordered collections (Sequence, ComparableSequence, List, and ComparableList):
+- `Corresponds(collection1, collection2, function)` - test whether values in collection1 map into values in collection2 by the given function
+- `Drop(collection, n)` - Drop first n elements
+- `DropRight(collection, n)` - Drop last n elements
+- `DropWhile(collection, predicate)` - Drop elements while predicate is true
+- `Find(collection, predicate)` - returns the index and value of the first element matching predicate
+- `FindLast(collection, predicate)` - returns the index and value of the last element matching predicate
+- `Head(collection)` - returns the first element in a collection
+- `Init(collection)` - returns all elements excluding the last one
+- `Last(collection)` - Get last element
+- `ReduceRight(collection, function, initial)` - Right-to-left reduction
+- `Reverse(collection)` - Reverse order of elements
+- `ReverseMap(collection, function)` - Map elements in reverse order
+- `SplitAt(collection, n)` - Split collection at index n
+- `Tail(collection)` - Get all elements except first
+- `Take(collection, n)` - Get first n elements
+- `TakeRight(collection, n)` - Get last n elements
+
 
 ## Contributing
 
