@@ -1,5 +1,5 @@
 # Gophers - generic collection utils for Go
-
+[![Go Reference](https://pkg.go.dev/badge/github.com/charbz/gophers.svg)](https://pkg.go.dev/github.com/charbz/gophers)
 ![gophers](https://github.com/user-attachments/assets/8ae33a16-e66a-43af-9412-f6bbd192d647)
 
 Gophers is an awesome collections library for Go offering tons of utilities right out of the box.
