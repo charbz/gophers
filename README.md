@@ -1,12 +1,14 @@
-# Gophers - The generic collections library for Go
+# Gophers - generic collection utils for Go
+
+![gophers](https://github.com/user-attachments/assets/8ae33a16-e66a-43af-9412-f6bbd192d647)
 
 Gophers is an awesome collections library for Go offering tons of utilities right out of the box.
 
 Collection Types:
 - **Sequence** : An ordered collection wrapping a Go slice. Great for fast random access.
-- **ComparableSequence** : A Sequence of elements that can be compared to each other.
-- **List** : An ordered collection wrapping a linked list. Great for fast insertion / removal, and implementing stacks and queues.
-- **ComparableList** : A List of elements that can be compared to each other.
+- **ComparableSequence** : A Sequence of comparable elements. Offers extra functionality.
+- **List** : An ordered collection wrapping a linked list. Great for fast insertion, removal, and implementing stacks and queues.
+- **ComparableList** : A List of comparable elements. Offers extra functionality.
 - **Set** : A hash set of unique elements.
 
 Here's a few examples of what you can do:
@@ -365,4 +367,5 @@ The package functions below can be called on ordered collections (Sequence, Comp
 Contributions are welcome! Feel free to submit a Pull Request.
 
 If you have any ideas for new features or improvements, or would like to chat,
-Feel free to reach out on [Reddit r/gopherslib](https://www.reddit.com/r/gopherslib).
+
+Feel free to reach out on [Reddit: r/gopherslib](https://www.reddit.com/r/gopherslib) or on [Discord: Gophers Project](https://discord.gg/SyfHuU5j)
