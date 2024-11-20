@@ -3,7 +3,7 @@ package list
 import (
 	"cmp"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 // ComparableList is a list of comparable types.

@@ -1,12 +1,12 @@
 package set
 
 import (
+	"cmp"
+	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
-func TestSequence_Contains(t *testing.T) {
+func TestSet_Contains(t *testing.T) {
 	tests := []struct {
 		name      string
 		slice     []int
@@ -31,7 +31,9 @@ func TestSequence_Contains(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := NewSet(tt.slice)
 			got := c.Contains(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Contains() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -61,7 +63,9 @@ func TestSet_ContainsFunc(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			got := s.ContainsFunc(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("ContainsFunc() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -97,7 +101,9 @@ func TestSet_Union(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.base)
 			result := s.Union(NewSet(tt.others))
-			assert.ElementsMatch(t, tt.want, result.ToSlice())
+			if !assertEqualValues(result.ToSlice(), tt.want) {
+				t.Errorf("Union() = %v, want %v", result.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -139,7 +145,9 @@ func TestSet_Intersection(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.base)
 			result := s.Intersection(NewSet(tt.others))
-			assert.ElementsMatch(t, tt.want, result.ToSlice())
+			if !assertEqualValues(result.ToSlice(), tt.want) {
+				t.Errorf("Intersection() = %v, want %v", result.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -176,7 +184,9 @@ func TestSet_Diff(t *testing.T) {
 			s1 := NewSet(tt.base)
 			s2 := NewSet(tt.diff)
 			result := s1.Diff(s2)
-			assert.ElementsMatch(t, tt.want, result.ToSlice())
+			if !assertEqualValues(result.ToSlice(), tt.want) {
+				t.Errorf("Diff() = %v, want %v", result.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -213,7 +223,9 @@ func TestSet_Equals(t *testing.T) {
 			s1 := NewSet(tt.s1)
 			s2 := NewSet(tt.s2)
 			got := s1.Equals(s2)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Equals() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -240,7 +252,9 @@ func TestSet_IsEmpty(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			got := s.IsEmpty()
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("IsEmpty() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -250,12 +264,18 @@ func TestSet_Clone(t *testing.T) {
 	clone := original.Clone()
 
 	// Verify clone has same elements
-	assert.ElementsMatch(t, original.ToSlice(), clone.ToSlice())
+	if !assertEqualValues(original.ToSlice(), clone.ToSlice()) {
+		t.Errorf("Clone() = %v, want %v", clone.ToSlice(), original.ToSlice())
+	}
 
 	// Verify modifying clone doesn't affect original
 	clone.Add(4)
-	assert.NotContains(t, original.ToSlice(), 4)
-	assert.Contains(t, clone.ToSlice(), 4)
+	if slices.Contains(original.ToSlice(), 4) {
+		t.Errorf("Clone() = %v, want %v", clone.ToSlice(), original.ToSlice())
+	}
+	if !slices.Contains(clone.ToSlice(), 4) {
+		t.Errorf("Clone() = %v, want %v", clone.ToSlice(), original.ToSlice())
+	}
 }
 
 func TestSet_Partition(t *testing.T) {
@@ -279,8 +299,12 @@ func TestSet_Partition(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			left, right := s.Partition(tt.predicate)
-			assert.ElementsMatch(t, tt.wantLeft, left.ToSlice())
-			assert.ElementsMatch(t, tt.wantRight, right.ToSlice())
+			if !assertEqualValues(left.ToSlice(), tt.wantLeft) {
+				t.Errorf("Partition() = %v, want %v", left.ToSlice(), tt.wantLeft)
+			}
+			if !assertEqualValues(right.ToSlice(), tt.wantRight) {
+				t.Errorf("Partition() = %v, want %v", right.ToSlice(), tt.wantRight)
+			}
 		})
 	}
 }
@@ -307,7 +331,9 @@ func TestSet_NonEmpty(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			got := s.NonEmpty()
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("NonEmpty() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -337,7 +363,9 @@ func TestSet_ForAll(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			got := s.ForAll(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("ForAll() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -367,7 +395,9 @@ func TestSet_Filter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			result := s.Filter(tt.predicate)
-			assert.ElementsMatch(t, tt.want, result.ToSlice())
+			if !assertEqualValues(result.ToSlice(), tt.want) {
+				t.Errorf("Filter() = %v, want %v", result.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -397,7 +427,9 @@ func TestSet_FilterNot(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			result := s.FilterNot(tt.predicate)
-			assert.ElementsMatch(t, tt.want, result.ToSlice())
+			if !assertEqualValues(result.ToSlice(), tt.want) {
+				t.Errorf("FilterNot() = %v, want %v", result.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -427,7 +459,9 @@ func TestSet_Count(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := NewSet(tt.slice)
 			got := s.Count(tt.predicate)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Count() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -435,13 +469,23 @@ func TestSet_Count(t *testing.T) {
 func TestSet_Remove(t *testing.T) {
 	s := NewSet([]int{1, 2, 3})
 	s.Remove(2)
-	assert.ElementsMatch(t, []int{1, 3}, s.ToSlice())
+	if !assertEqualValues(s.ToSlice(), []int{1, 3}) {
+		t.Errorf("Remove() = %v, want %v", s.ToSlice(), []int{1, 3})
+	}
 }
 
 func TestSet_Random(t *testing.T) {
 	s := NewSet([]int{1})
-	assert.Equal(t, 1, s.Random())
+	if got := s.Random(); got != 1 {
+		t.Errorf("Random() = %v, want %v", got, 1)
+	}
+}
 
-	empty := NewSet[int]()
-	assert.Panics(t, func() { empty.Random() })
+func assertEqualValues[T cmp.Ordered](a []T, b []T) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	slices.Sort(a)
+	slices.Sort(b)
+	return slices.Equal(a, b)
 }

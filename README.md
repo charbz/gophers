@@ -1,5 +1,5 @@
 # Gophers - generic collection utils for Go
-
+[![Go Reference](https://pkg.go.dev/badge/github.com/charbz/gophers.svg)](https://pkg.go.dev/github.com/charbz/gophers)
 ![gophers](https://github.com/user-attachments/assets/8ae33a16-e66a-43af-9412-f6bbd192d647)
 
 Gophers is an awesome collections library for Go offering tons of utilities right out of the box.
@@ -24,7 +24,7 @@ go get github.com/charbz/gophers
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/list"
+  "github.com/charbz/gophers/list"
 )
 
 type Foo struct {
@@ -81,7 +81,7 @@ They offer all the same functionality as an ordered collection but provide addit
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/list"
+  "github.com/charbz/gophers/list"
 )
 
 nums := list.NewComparableList([]int{1, 1, 2, 2, 2, 3, 4, 5})
@@ -126,7 +126,7 @@ but provide additional methods for set operations.
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/set"
+  "github.com/charbz/gophers/set"
 )
 
 setA := set.NewSet([]string{"A", "B", "C", "A", "C", "A"}) // Set[string] {"A", "B", "C"}
@@ -152,9 +152,9 @@ You can use package functions such as Map, Reduce, GroupBy, and many more on any
 
 ```go
 import (
-  "github.com/charbz/gophers/pkg/collection"
-  "github.com/charbz/gophers/pkg/list"
-  "github.com/charbz/gophers/pkg/sequence"
+  "github.com/charbz/gophers/collection"
+  "github.com/charbz/gophers/list"
+  "github.com/charbz/gophers/sequence"
 )
 
 foos := sequence.NewSequence([]Foo{
@@ -368,4 +368,4 @@ Contributions are welcome! Feel free to submit a Pull Request.
 
 If you have any ideas for new features or improvements, or would like to chat,
 
-Feel free to reach out on [Reddit: r/gopherslib](https://www.reddit.com/r/gopherslib) or on [Discord: Gophers Project](https://discord.gg/SyfHuU5j)
+Feel free to reach out on [Discord: Gophers Project](https://discord.gg/vQ2dqQU6ve) or on [Reddit: r/gopherslib](https://www.reddit.com/r/gopherslib)

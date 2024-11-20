@@ -4,7 +4,7 @@ import (
 	"cmp"
 	"slices"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 // ComparableSequence is a sequence of comparable types.

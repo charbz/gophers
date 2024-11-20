@@ -4,7 +4,7 @@
 
 // Package collections implements support for generic Collections of data.
 // A collection wraps an underlying Go slice and provides convenience methods
-// and synthatic sugar on top of it.
+// and syntatic sugar on top of it.
 package collection
 
 import (

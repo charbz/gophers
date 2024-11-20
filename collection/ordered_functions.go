@@ -150,7 +150,7 @@ func Head[T any](s OrderedCollection[T]) (T, error) {
 	return s.At(0), nil
 }
 
-// Init returns a sequence containing all elements excluding the last one.
+// Init returns a collection containing all elements excluding the last one.
 //
 // example usage:
 //

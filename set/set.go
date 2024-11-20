@@ -4,7 +4,7 @@
 
 // Package set implements support for a generic unordered Set.
 // A Set is a Collection that wraps an underlying hash map
-// and provides convenience methods and synthatic sugar on top of it.
+// and provides convenience methods and syntatic sugar on top of it.
 //
 // Set elements are unique and unordered by default. However Sets share
 // some methods with other collections and implement the Collection interface.
@@ -15,7 +15,7 @@ import (
 	"iter"
 	"maps"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 type Set[T comparable] struct {
@@ -78,7 +78,7 @@ func (s *Set[T]) String() string {
 	return fmt.Sprintf("Set(%T) %v", *new(T), s.ToSlice())
 }
 
-// The following methods are mostly synthatic sugar
+// The following methods are mostly syntatic sugar
 // wrapping Collection functions to enable function chaining:
 // i.e. set.Filter(f).Foreach(f2)
 

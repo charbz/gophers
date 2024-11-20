@@ -4,7 +4,7 @@
 
 // Package sequence implements support for a generic ordered sequence.
 // A Sequence is a Collection that wraps an underlying Go slice and provides
-// convenience methods and synthatic sugar on top of it.
+// convenience methods and syntatic sugar on top of it.
 //
 // Compared to a List, a Sequence allows for efficient O(1) access to arbitrary elements
 // but slower insertion and removal time, making it ideal for situations where fast random access is needed.
@@ -19,7 +19,7 @@ import (
 	"math/rand"
 	"slices"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 type Sequence[T any] struct {
@@ -106,7 +106,7 @@ func (c *Sequence[T]) Apply(f func(T) T) *Sequence[T] {
 	return c
 }
 
-// The following methods are mostly synthatic sugar
+// The following methods are mostly syntatic sugar
 // wrapping Collection functions to enable function chaining:
 // i.e. sequence.Filter(f).Take(n)
 

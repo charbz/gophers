@@ -4,7 +4,7 @@
 
 // Package list implements support for a generic ordered List.
 // A List is a Collection that wraps an underlying doubly linked list
-// and provides convenience methods and synthatic sugar on top of it.
+// and provides convenience methods and syntatic sugar on top of it.
 //
 // Compared to a Sequence, a List allows for efficient insertion and removal of elements
 // at the edges of the list, but slower access to arbitrary elements. This makes the List a good choice
@@ -19,7 +19,7 @@ import (
 	"iter"
 	"math/rand"
 
-	"github.com/charbz/gophers/pkg/collection"
+	"github.com/charbz/gophers/collection"
 )
 
 type Node[T any] struct {

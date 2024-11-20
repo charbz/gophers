@@ -5,8 +5,6 @@ import (
 	"math/rand"
 	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 // MockCollection implements the Collection interface for testing purposes
@@ -57,5 +55,7 @@ func (m *MockCollection[T]) New(s ...[]T) Collection[T] {
 
 func TestMockCollectionImplementsCollection(t *testing.T) {
 	var m Collection[string] = NewMockCollection([]string{"a", "b", "c"})
-	assert.Equal(t, 3, m.Length())
+	if m.Length() != 3 {
+		t.Errorf("expected length 3, got %d", m.Length())
+	}
 }

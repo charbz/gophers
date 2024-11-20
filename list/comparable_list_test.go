@@ -1,9 +1,8 @@
 package list
 
 import (
+	"slices"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestComparableList_Contains(t *testing.T) {
@@ -37,7 +36,9 @@ func TestComparableList_Contains(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got := l.Contains(tt.value)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Contains() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -69,7 +70,9 @@ func TestComparableList_Distinct(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got := l.Distinct()
-			assert.ElementsMatch(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Distinct() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -112,7 +115,9 @@ func TestComparableList_Diff(t *testing.T) {
 			l1 := NewComparableList(tt.slice1)
 			l2 := NewComparableList(tt.slice2)
 			got := l1.Diff(l2)
-			assert.ElementsMatch(t, tt.want, got.ToSlice())
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Diff() = %v, want %v", got.ToSlice(), tt.want)
+			}
 		})
 	}
 }
@@ -155,7 +160,9 @@ func TestComparableList_Equals(t *testing.T) {
 			l1 := NewComparableList(tt.slice1)
 			l2 := NewComparableList(tt.slice2)
 			got := l1.Equals(l2)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Equals() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -191,7 +198,9 @@ func TestComparableList_IndexOf(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got := l.IndexOf(tt.value)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("IndexOf() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -233,7 +242,9 @@ func TestComparableList_LastIndexOf(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got := l.LastIndexOf(tt.value)
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("LastIndexOf() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
@@ -270,10 +281,16 @@ func TestComparableList_Max(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got, err := l.Max()
 			if tt.wantErr {
-				assert.Error(t, err)
+				if err == nil {
+					t.Errorf("Max() = %v, want error", got)
+				}
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
+				if err != nil {
+					t.Errorf("Max() = %v, want no error", got)
+				}
+				if got != tt.want {
+					t.Errorf("Max() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
@@ -311,10 +328,16 @@ func TestComparableList_Min(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got, err := l.Min()
 			if tt.wantErr {
-				assert.Error(t, err)
+				if err == nil {
+					t.Errorf("Min() = %v, want error", got)
+				}
 			} else {
-				assert.NoError(t, err)
-				assert.Equal(t, tt.want, got)
+				if err != nil {
+					t.Errorf("Min() = %v, want no error", got)
+				}
+				if got != tt.want {
+					t.Errorf("Min() = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}
@@ -347,7 +370,9 @@ func TestComparableList_Sum(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			l := NewComparableList(tt.slice)
 			got := l.Sum()
-			assert.Equal(t, tt.want, got)
+			if got != tt.want {
+				t.Errorf("Sum() = %v, want %v", got, tt.want)
+			}
 		})
 	}
 }
