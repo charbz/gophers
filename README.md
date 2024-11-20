@@ -368,4 +368,4 @@ Contributions are welcome! Feel free to submit a Pull Request.
 
 If you have any ideas for new features or improvements, or would like to chat,
 
-Feel free to reach out on [Reddit: r/gopherslib](https://www.reddit.com/r/gopherslib) or on [Discord: Gophers Project](https://discord.gg/SyfHuU5j)
+Feel free to reach out on [Discord: Gophers Project](https://discord.gg/vQ2dqQU6ve) or on [Reddit: r/gopherslib](https://www.reddit.com/r/gopherslib)
