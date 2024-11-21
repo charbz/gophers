@@ -124,3 +124,11 @@ func (l *ComparableList[T]) Sum() T {
 	}
 	return sum
 }
+
+func (c *ComparableList[T]) StartsWith(other *ComparableList[T]) bool {
+	return collection.StartsWith(c, other)
+}
+
+func (c *ComparableList[T]) EndsWith(other *ComparableList[T]) bool {
+	return collection.EndsWith(c, other)
+}

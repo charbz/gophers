@@ -127,3 +127,103 @@ func TestSum(t *testing.T) {
 		})
 	}
 }
+
+func TestStartsWith(t *testing.T) {
+	tests := []struct {
+		name       string
+		s1         []int
+		s2         []int
+		startsWith bool
+	}{
+		{
+			name:       "starts with matching elements",
+			s1:         []int{1, 2, 3, 4},
+			s2:         []int{1, 2},
+			startsWith: true,
+		},
+		{
+			name:       "does not start with different elements",
+			s1:         []int{1, 2, 3, 4},
+			s2:         []int{2, 3},
+			startsWith: false,
+		},
+		{
+			name:       "empty s2 (always true)",
+			s1:         []int{1, 2, 3, 4},
+			s2:         []int{},
+			startsWith: true,
+		},
+		{
+			name:       "s1 shorter than s2",
+			s1:         []int{1, 2},
+			s2:         []int{1, 2, 3},
+			startsWith: false,
+		},
+		{
+			name:       "both sequences empty",
+			s1:         []int{},
+			s2:         []int{},
+			startsWith: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c1 := NewComparableSequence(tt.s1)
+			c2 := NewComparableSequence(tt.s2)
+			if got := c1.StartsWith(c2); got != tt.startsWith {
+				t.Errorf("StartsWith() = %v, want %v", got, tt.startsWith)
+			}
+		})
+	}
+}
+
+func TestEndsWith(t *testing.T) {
+	tests := []struct {
+		name      string
+		s1        []int
+		s2        []int
+		endsWith  bool
+	}{
+		{
+			name:      "ends with matching elements",
+			s1:        []int{1, 2, 3, 4},
+			s2:        []int{3, 4},
+			endsWith:  true,
+		},
+		{
+			name:      "does not end with different elements",
+			s1:        []int{1, 2, 3, 4},
+			s2:        []int{2, 3},
+			endsWith:  false,
+		},
+		{
+			name:      "empty s2 (always true)",
+			s1:        []int{1, 2, 3, 4},
+			s2:        []int{},
+			endsWith:  true,
+		},
+		{
+			name:      "s1 shorter than s2",
+			s1:        []int{1, 2},
+			s2:        []int{1, 2, 3},
+			endsWith:  false,
+		},
+		{
+			name:      "both sequences empty",
+			s1:        []int{},
+			s2:        []int{},
+			endsWith:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c1 := NewComparableSequence(tt.s1)
+			c2 := NewComparableSequence(tt.s2)
+			if got := c1.EndsWith(c2); got != tt.endsWith {
+				t.Errorf("EndsWith() = %v, want %v", got, tt.endsWith)
+			}
+		})
+	}
+}
