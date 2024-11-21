@@ -7,13 +7,8 @@
 
 // Unfortunately Go does not allow Generic type parameters to be defined directly on struct methods,
 // Given that the Collection struct is bound to 1 generic argument [T any] representing the underlying type,
-// operations that map into a different type altogether such as f(T) -> K must be defined as functions.
-// and used as follows:
-//
-//	Map(collection, func(t T) K {
-//	     ...
-//	     return k
-//	})
+// operations that map into a different type altogether such as f(Collection[T]) -> Collection[K]
+// must be defined as functions.
 
 package collection
 
