@@ -180,40 +180,40 @@ func TestStartsWith(t *testing.T) {
 
 func TestEndsWith(t *testing.T) {
 	tests := []struct {
-		name      string
-		s1        []int
-		s2        []int
-		endsWith  bool
+		name     string
+		s1       []int
+		s2       []int
+		endsWith bool
 	}{
 		{
-			name:      "ends with matching elements",
-			s1:        []int{1, 2, 3, 4},
-			s2:        []int{3, 4},
-			endsWith:  true,
+			name:     "ends with matching elements",
+			s1:       []int{1, 2, 3, 4},
+			s2:       []int{3, 4},
+			endsWith: true,
 		},
 		{
-			name:      "does not end with different elements",
-			s1:        []int{1, 2, 3, 4},
-			s2:        []int{2, 3},
-			endsWith:  false,
+			name:     "does not end with different elements",
+			s1:       []int{1, 2, 3, 4},
+			s2:       []int{2, 3},
+			endsWith: false,
 		},
 		{
-			name:      "empty s2 (always true)",
-			s1:        []int{1, 2, 3, 4},
-			s2:        []int{},
-			endsWith:  true,
+			name:     "empty s2 (always true)",
+			s1:       []int{1, 2, 3, 4},
+			s2:       []int{},
+			endsWith: true,
 		},
 		{
-			name:      "s1 shorter than s2",
-			s1:        []int{1, 2},
-			s2:        []int{1, 2, 3},
-			endsWith:  false,
+			name:     "s1 shorter than s2",
+			s1:       []int{1, 2},
+			s2:       []int{1, 2, 3},
+			endsWith: false,
 		},
 		{
-			name:      "both sequences empty",
-			s1:        []int{},
-			s2:        []int{},
-			endsWith:  true,
+			name:     "both sequences empty",
+			s1:       []int{},
+			s2:       []int{},
+			endsWith: true,
 		},
 	}
 

@@ -563,10 +563,10 @@ func TestTakeRight(t *testing.T) {
 	}
 }
 
-func TestStartsWith( t *testing.T) {
+func TestStartsWith(t *testing.T) {
 	tests := []struct {
 		name       string
-		A 	       []int 
+		A          []int
 		B          []int
 		startsWith bool
 	}{
@@ -586,15 +586,15 @@ func TestStartsWith( t *testing.T) {
 			got := StartsWith(NewMockOrderedCollection(tt.A), NewMockOrderedCollection(tt.B))
 			if got != tt.startsWith {
 				t.Errorf("StartsWith() = %v, want %v", got, tt.startsWith)
-            }
+			}
 		})
 	}
 }
 
-func TestEndsWith( t *testing.T) {
+func TestEndsWith(t *testing.T) {
 	tests := []struct {
 		name     string
-		A 	     []int 
+		A        []int
 		B        []int
 		endsWith bool
 	}{
@@ -613,8 +613,8 @@ func TestEndsWith( t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := EndsWith(NewMockOrderedCollection(tt.A), NewMockOrderedCollection(tt.B))
 			if got != tt.endsWith {
-				t.Errorf("StartsWith() = %v, want %v", got, tt.endsWith)
-            }
+				t.Errorf("EndsWith() = %v, want %v", got, tt.endsWith)
+			}
 		})
 	}
 }

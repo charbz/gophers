@@ -429,40 +429,40 @@ func TestComparableList_StartsWith(t *testing.T) {
 
 func TestComparableList_EndsWith(t *testing.T) {
 	tests := []struct {
-		name      string
-		list1     []int
-		list2     []int
-		endsWith  bool
+		name     string
+		list1    []int
+		list2    []int
+		endsWith bool
 	}{
 		{
-			name:      "ends with matching elements",
-			list1:     []int{1, 2, 3, 4},
-			list2:     []int{3, 4},
-			endsWith:  true,
+			name:     "ends with matching elements",
+			list1:    []int{1, 2, 3, 4},
+			list2:    []int{3, 4},
+			endsWith: true,
 		},
 		{
-			name:      "does not end with different elements",
-			list1:     []int{1, 2, 3, 4},
-			list2:     []int{2, 3},
-			endsWith:  false,
+			name:     "does not end with different elements",
+			list1:    []int{1, 2, 3, 4},
+			list2:    []int{2, 3},
+			endsWith: false,
 		},
 		{
-			name:      "empty list2 (always true)",
-			list1:     []int{1, 2, 3, 4},
-			list2:     []int{},
-			endsWith:  true,
+			name:     "empty list2 (always true)",
+			list1:    []int{1, 2, 3, 4},
+			list2:    []int{},
+			endsWith: true,
 		},
 		{
-			name:      "list1 shorter than list2",
-			list1:     []int{3, 4},
-			list2:     []int{2, 3, 4},
-			endsWith:  false,
+			name:     "list1 shorter than list2",
+			list1:    []int{3, 4},
+			list2:    []int{2, 3, 4},
+			endsWith: false,
 		},
 		{
-			name:      "both lists empty",
-			list1:     []int{},
-			list2:     []int{},
-			endsWith:  true,
+			name:     "both lists empty",
+			list1:    []int{},
+			list2:    []int{},
+			endsWith: true,
 		},
 	}
 

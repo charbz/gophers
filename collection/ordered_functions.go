@@ -102,7 +102,7 @@ func DropWhile[T any](s OrderedCollection[T], f func(T) bool) OrderedCollection[
 //
 // output
 //
-//	2, 3 
+//	2, 3
 func Find[T any](s OrderedCollection[T], f func(T) bool) (index int, value T) {
 	for i, v := range s.All() {
 		if f(v) {
@@ -309,8 +309,8 @@ func TakeRight[T any](s OrderedCollection[T], n int) OrderedCollection[T] {
 	return s.Slice(max(s.Length()-n, 0), s.Length())
 }
 
-// StartsWith checks if the elements of the second collection (s2) match the 
-// initial elements of the first collection (s1) in order. 
+// StartsWith checks if the elements of the second collection (s2) match the
+// initial elements of the first collection (s1) in order.
 //
 // Example usage:
 //
@@ -329,12 +329,12 @@ func StartsWith[T comparable](s1 OrderedCollection[T], s2 OrderedCollection[T]) 
 	for i, v := range s2.All() {
 		if v != s1.At(i) {
 			return false
-        }
+		}
 	}
 	return true
 }
 
-// EndsWith checks if the elements of the second collection (s2) match the 
+// EndsWith checks if the elements of the second collection (s2) match the
 // final elements of the first collection (s1) in reverse order.
 //
 // Example usage:
@@ -355,9 +355,9 @@ func EndsWith[T comparable](s1 OrderedCollection[T], s2 OrderedCollection[T]) bo
 	offset := s1.Length() - s2.Length()
 
 	for i, v := range s2.All() {
-		if s1.At(offset + i) != v {
+		if s1.At(offset+i) != v {
 			return false
-        }
+		}
 	}
 	return true
 }
