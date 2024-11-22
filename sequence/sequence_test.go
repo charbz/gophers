@@ -596,6 +596,44 @@ func TestSequence_Length(t *testing.T) {
 	}
 }
 
+func TestSequence_Reject(t *testing.T) {
+	tests := []struct {
+		name   string
+		slice  []int
+		filter func(int) bool
+		want   []int
+	}{
+		{
+			name:   "filter not even numbers",
+			slice:  []int{1, 2, 3, 4, 5, 6},
+			filter: func(i int) bool { return i%2 == 0 },
+			want:   []int{1, 3, 5},
+		},
+		{
+			name:   "filter not nothing",
+			slice:  []int{1, 2, 3},
+			filter: func(i int) bool { return false },
+			want:   []int{1, 2, 3},
+		},
+		{
+			name:   "filter not everything",
+			slice:  []int{1, 2, 3},
+			filter: func(i int) bool { return true },
+			want:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewSequence(tt.slice)
+			got := c.Reject(tt.filter)
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Reject() = %v, want %v", got.ToSlice(), tt.want)
+			}
+		})
+	}
+}
+
 func TestSequence_Slice(t *testing.T) {
 	tests := []struct {
 		name  string

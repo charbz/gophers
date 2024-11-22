@@ -146,6 +146,11 @@ func (s *Set[T]) FilterNot(f func(T) bool) *Set[T] {
 	return collection.FilterNot(s, f).(*Set[T])
 }
 
+// Reject is an alias for collection.FilterNot
+func (l *Set[T]) Reject(f func(T) bool) *Set[T] {
+	return collection.FilterNot(l, f).(*Set[T])
+}
+
 // Apply applies a function to each element in the set.
 func (s *Set[T]) Apply(f func(T) T) *Set[T] {
 	for k := range s.elements {
