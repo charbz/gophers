@@ -101,3 +101,11 @@ func (c *ComparableSequence[T]) Sum() T {
 	}
 	return sum
 }
+
+func (c *ComparableSequence[T]) StartsWith(other *ComparableSequence[T]) bool {
+	return collection.StartsWith(c, other)
+}
+
+func (c *ComparableSequence[T]) EndsWith(other *ComparableSequence[T]) bool {
+	return collection.EndsWith(c, other)
+}
