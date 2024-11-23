@@ -273,6 +273,11 @@ func (c *Sequence[T]) Reverse() *Sequence[T] {
 	return collection.Reverse(c).(*Sequence[T])
 }
 
+// Reject is an alias for collection.FilterNot
+func (l *Sequence[T]) Reject(f func(T) bool) *Sequence[T] {
+	return collection.FilterNot(l, f).(*Sequence[T])
+}
+
 // String implements the Stringer interface.
 func (c *Sequence[T]) String() string {
 	return fmt.Sprintf("Seq(%T) %v", *new(T), c.elements)

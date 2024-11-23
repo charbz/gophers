@@ -562,3 +562,59 @@ func TestTakeRight(t *testing.T) {
 		})
 	}
 }
+
+func TestStartsWith(t *testing.T) {
+	tests := []struct {
+		name       string
+		A          []int
+		B          []int
+		startsWith bool
+	}{
+		// Core test cases
+		{name: "exact match", A: []int{1, 2, 3}, B: []int{1, 2, 3}, startsWith: true},
+		{name: "prefix match", A: []int{1, 2, 3, 4}, B: []int{1, 2}, startsWith: true},
+		{name: "no match", A: []int{1, 2, 3}, B: []int{2, 3}, startsWith: false},
+		{name: "B longer than A", A: []int{1, 2}, B: []int{1, 2, 3}, startsWith: false},
+
+		// Edge cases
+		{name: "B is empty", A: []int{1, 2, 3}, B: []int{}, startsWith: true},
+		{name: "A is empty", A: []int{}, B: []int{1}, startsWith: false},
+		{name: "both empty", A: []int{}, B: []int{}, startsWith: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := StartsWith(NewMockOrderedCollection(tt.A), NewMockOrderedCollection(tt.B))
+			if got != tt.startsWith {
+				t.Errorf("StartsWith() = %v, want %v", got, tt.startsWith)
+			}
+		})
+	}
+}
+
+func TestEndsWith(t *testing.T) {
+	tests := []struct {
+		name     string
+		A        []int
+		B        []int
+		endsWith bool
+	}{
+		// Core test cases
+		{name: "exact match", A: []int{1, 2, 3}, B: []int{1, 2, 3}, endsWith: true},
+		{name: "postfix match", A: []int{1, 2, 3, 4}, B: []int{3, 4}, endsWith: true},
+		{name: "no match", A: []int{1, 2, 3}, B: []int{1, 2}, endsWith: false},
+		{name: "B longer than A", A: []int{1, 2}, B: []int{1, 2, 3}, endsWith: false},
+
+		// Edge cases
+		{name: "B is empty", A: []int{1, 2, 3}, B: []int{}, endsWith: true},
+		{name: "A is empty", A: []int{}, B: []int{1}, endsWith: false},
+		{name: "both empty", A: []int{}, B: []int{}, endsWith: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := EndsWith(NewMockOrderedCollection(tt.A), NewMockOrderedCollection(tt.B))
+			if got != tt.endsWith {
+				t.Errorf("EndsWith() = %v, want %v", got, tt.endsWith)
+			}
+		})
+	}
+}

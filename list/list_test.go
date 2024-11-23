@@ -668,6 +668,44 @@ func TestList_Reverse(t *testing.T) {
 	}
 }
 
+func TestList_Reject(t *testing.T) {
+	tests := []struct {
+		name      string
+		slice     []int
+		predicate func(int) bool
+		want      []int
+	}{
+		{
+			name:      "filter not even numbers",
+			slice:     []int{1, 2, 3, 4, 5},
+			predicate: func(i int) bool { return i%2 == 0 },
+			want:      []int{1, 3, 5},
+		},
+		{
+			name:      "filter not none",
+			slice:     []int{1, 2, 3},
+			predicate: func(i int) bool { return false },
+			want:      []int{1, 2, 3},
+		},
+		{
+			name:      "filter not all",
+			slice:     []int{1, 2, 3},
+			predicate: func(i int) bool { return true },
+			want:      []int{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := NewList(tt.slice)
+			got := l.Reject(tt.predicate)
+			if !slices.Equal(got.ToSlice(), tt.want) {
+				t.Errorf("Reject() = %v, want %v", got.ToSlice(), tt.want)
+			}
+		})
+	}
+}
+
 func TestList_SplitAt(t *testing.T) {
 	tests := []struct {
 		name      string

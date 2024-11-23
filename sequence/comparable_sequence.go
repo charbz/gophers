@@ -1,3 +1,7 @@
+// Copyright (c) 2024 Gophers. All rights reserved.
+// Use of this source code is governed by the MIT
+// license that can be found in the LICENSE file.
+
 package sequence
 
 import (
@@ -96,4 +100,12 @@ func (c *ComparableSequence[T]) Sum() T {
 		sum += v
 	}
 	return sum
+}
+
+func (c *ComparableSequence[T]) StartsWith(other *ComparableSequence[T]) bool {
+	return collection.StartsWith(c, other)
+}
+
+func (c *ComparableSequence[T]) EndsWith(other *ComparableSequence[T]) bool {
+	return collection.EndsWith(c, other)
 }

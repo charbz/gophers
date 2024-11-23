@@ -371,6 +371,11 @@ func (l *List[T]) Reverse() *List[T] {
 	return collection.Reverse(l).(*List[T])
 }
 
+// Reject is an alias for collection.FilterNot
+func (l *List[T]) Reject(f func(T) bool) *List[T] {
+	return collection.FilterNot(l, f).(*List[T])
+}
+
 // Take is an alias for collection.Take
 func (l *List[T]) Take(n int) *List[T] {
 	return collection.Take(l, n).(*List[T])

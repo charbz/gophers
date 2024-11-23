@@ -376,3 +376,103 @@ func TestComparableList_Sum(t *testing.T) {
 		})
 	}
 }
+
+func TestComparableList_StartsWith(t *testing.T) {
+	tests := []struct {
+		name       string
+		list1      []int
+		list2      []int
+		startsWith bool
+	}{
+		{
+			name:       "starts with matching elements",
+			list1:      []int{1, 2, 3, 4},
+			list2:      []int{1, 2},
+			startsWith: true,
+		},
+		{
+			name:       "does not start with different elements",
+			list1:      []int{1, 2, 3, 4},
+			list2:      []int{2, 3},
+			startsWith: false,
+		},
+		{
+			name:       "empty list2 (always true)",
+			list1:      []int{1, 2, 3, 4},
+			list2:      []int{},
+			startsWith: true,
+		},
+		{
+			name:       "list1 shorter than list2",
+			list1:      []int{1, 2},
+			list2:      []int{1, 2, 3},
+			startsWith: false,
+		},
+		{
+			name:       "both lists empty",
+			list1:      []int{},
+			list2:      []int{},
+			startsWith: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l1 := NewComparableList(tt.list1)
+			l2 := NewComparableList(tt.list2)
+			if got := l1.StartsWith(l2); got != tt.startsWith {
+				t.Errorf("StartsWith() = %v, want %v", got, tt.startsWith)
+			}
+		})
+	}
+}
+
+func TestComparableList_EndsWith(t *testing.T) {
+	tests := []struct {
+		name     string
+		list1    []int
+		list2    []int
+		endsWith bool
+	}{
+		{
+			name:     "ends with matching elements",
+			list1:    []int{1, 2, 3, 4},
+			list2:    []int{3, 4},
+			endsWith: true,
+		},
+		{
+			name:     "does not end with different elements",
+			list1:    []int{1, 2, 3, 4},
+			list2:    []int{2, 3},
+			endsWith: false,
+		},
+		{
+			name:     "empty list2 (always true)",
+			list1:    []int{1, 2, 3, 4},
+			list2:    []int{},
+			endsWith: true,
+		},
+		{
+			name:     "list1 shorter than list2",
+			list1:    []int{3, 4},
+			list2:    []int{2, 3, 4},
+			endsWith: false,
+		},
+		{
+			name:     "both lists empty",
+			list1:    []int{},
+			list2:    []int{},
+			endsWith: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l1 := NewComparableList(tt.list1)
+			l2 := NewComparableList(tt.list2)
+			if got := l1.EndsWith(l2); got != tt.endsWith {
+				t.Errorf("EndsWith() = %v, want %v", got, tt.endsWith)
+			}
+		})
+	}
+}
