@@ -108,7 +108,7 @@ func TestSet_Union(t *testing.T) {
 	}
 }
 
-func TestSet_UnionIterator(t *testing.T) {
+func TestSet_Unioned(t *testing.T) {
 	tests := []struct {
 		name   string
 		base   []int
@@ -139,7 +139,7 @@ func TestSet_UnionIterator(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := []int{}
 			s := NewSet(tt.base)
-			for v := range s.UnionIterator(NewSet(tt.others)) {
+			for v := range s.Unioned(NewSet(tt.others)) {
 				got = append(got, v)
 			}
 			if !assertEqualValues(got, tt.want) {
@@ -193,7 +193,7 @@ func TestSet_Intersection(t *testing.T) {
 	}
 }
 
-func TestSet_IntersectionIterator(t *testing.T) {
+func TestSet_Intersected(t *testing.T) {
 	tests := []struct {
 		name   string
 		base   []int
@@ -230,7 +230,7 @@ func TestSet_IntersectionIterator(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := []int{}
 			s := NewSet(tt.base)
-			for v := range s.IntersectionIterator(NewSet(tt.others)) {
+			for v := range s.Intersected(NewSet(tt.others)) {
 				got = append(got, v)
 			}
 			if !assertEqualValues(got, tt.want) {

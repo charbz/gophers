@@ -157,19 +157,14 @@ func (s *Set[T]) Filter(f func(T) bool) *Set[T] {
 	return collection.Filter(s, f).(*Set[T])
 }
 
-// FilterIterator is an alias for collection.FilterIterator
-func (s *Set[T]) FilterIterator(f func(T) bool) iter.Seq[T] {
-	return collection.FilterIterator(s, f)
+// Filtered is an alias for collection.Filtered
+func (s *Set[T]) Filtered(f func(T) bool) iter.Seq[T] {
+	return collection.Filtered(s, f)
 }
 
 // FilterNot is an alias for collection.FilterNot
 func (s *Set[T]) FilterNot(f func(T) bool) *Set[T] {
 	return collection.FilterNot(s, f).(*Set[T])
-}
-
-// FilterNotIterator is an alias for collection.RejectIterator
-func (s *Set[T]) FilterNotIterator(f func(T) bool) iter.Seq[T] {
-	return collection.RejectIterator(s, f)
 }
 
 // ForAll is an alias for collection.ForAll
@@ -193,9 +188,9 @@ func (s *Set[T]) Intersection(s2 *Set[T]) *Set[T] {
 	return result
 }
 
-// IntersectionIterator returns an iterator over the intersection of
+// Intersected returns an iterator over the intersection of
 // the current set and the passed in set.
-func (s *Set[T]) IntersectionIterator(s2 *Set[T]) iter.Seq[T] {
+func (s *Set[T]) Intersected(s2 *Set[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for k := range s.elements {
 			if s2.Contains(k) {
@@ -226,9 +221,9 @@ func (l *Set[T]) Reject(f func(T) bool) *Set[T] {
 	return collection.FilterNot(l, f).(*Set[T])
 }
 
-// RejectIterator is an alias for collection.RejectIterator
-func (s *Set[T]) RejectIterator(f func(T) bool) iter.Seq[T] {
-	return collection.RejectIterator(s, f)
+// Rejected is an alias for collection.Rejected
+func (s *Set[T]) Rejected(f func(T) bool) iter.Seq[T] {
+	return collection.Rejected(s, f)
 }
 
 // Union returns a new set containing the union of the current set and the passed in set.
@@ -240,8 +235,8 @@ func (s *Set[T]) Union(s2 *Set[T]) *Set[T] {
 	return result
 }
 
-// UnionIterator returns an iterator over the union of the current set and the passed in set.
-func (s *Set[T]) UnionIterator(s2 *Set[T]) iter.Seq[T] {
+// Unioned returns an iterator over the union of the current set and the passed in set.
+func (s *Set[T]) Unioned(s2 *Set[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for k := range s.elements {
 			yield(k)

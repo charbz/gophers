@@ -37,9 +37,39 @@ func NewComparableSequence[T cmp.Ordered](s ...[]T) *ComparableSequence[T] {
 	return &ComparableSequence[T]{Sequence[T]{elements: slices.Concat(s...)}}
 }
 
+// The following methods are mostly syntatic sugar
+// wrapping Collection functions to enable function chaining:
+// i.e. sequence.Filter(f).Take(n)
+
+// Clone returns a copy of the collection. This is a shallow clone.
+func (c *ComparableSequence[T]) Clone() *ComparableSequence[T] {
+	return &ComparableSequence[T]{
+		Sequence[T]{elements: slices.Clone(c.elements)},
+	}
+}
+
 // Contains returns true if the sequence contains the given value.
 func (c *ComparableSequence[T]) Contains(v T) bool {
 	return slices.Contains(c.elements, v)
+}
+
+// Concat returns a new sequence concatenating the passed in sequences.
+func (c *ComparableSequence[T]) Concat(sequences ...*ComparableSequence[T]) *ComparableSequence[T] {
+	e := c.elements
+	for _, col := range sequences {
+		e = slices.Concat(e, col.elements)
+	}
+	return &ComparableSequence[T]{Sequence[T]{elements: e}}
+}
+
+// Concatenated is an alias for collection.Concatenated
+func (c *ComparableSequence[T]) Concatenated(s *ComparableSequence[T]) iter.Seq[T] {
+	return collection.Concatenated(c, s)
+}
+
+// Corresponds is an alias for collection.Corresponds
+func (c *ComparableSequence[T]) Corresponds(s *ComparableSequence[T], f func(T, T) bool) bool {
+	return collection.Corresponds(c, s, f)
 }
 
 // Distinct returns a new sequence containing only the unique elements from the original sequence.
@@ -56,9 +86,9 @@ func (c *ComparableSequence[T]) Distinct() *ComparableSequence[T] {
 	return r
 }
 
-// DistinctIterator is an alias for collection.DistinctIterator
-func (c *ComparableSequence[T]) DistinctIterator() iter.Seq[T] {
-	return collection.DistinctIterator(c)
+// Distincted is an alias for collection.Distincted
+func (c *ComparableSequence[T]) Distincted() iter.Seq[T] {
+	return collection.Distincted(c)
 }
 
 // Diff is an alias for collection.Diff
@@ -66,9 +96,9 @@ func (c *ComparableSequence[T]) Diff(s *ComparableSequence[T]) *ComparableSequen
 	return collection.Diff(c, s).(*ComparableSequence[T])
 }
 
-// DiffIterator is an alias for collection.DiffIterator
-func (c *ComparableSequence[T]) DiffIterator(s *ComparableSequence[T]) iter.Seq[T] {
-	return collection.DiffIterator(c, s)
+// Diffed is an alias for collection.Diffed
+func (c *ComparableSequence[T]) Diffed(s *ComparableSequence[T]) iter.Seq[T] {
+	return collection.Diffed(c, s)
 }
 
 // Equals returns true if the two sequences are equal.
@@ -93,8 +123,8 @@ func (c *ComparableSequence[T]) Intersect(s *ComparableSequence[T]) *ComparableS
 }
 
 // IntersectIterator is an alias for collection.IntersectIterator
-func (c *ComparableSequence[T]) IntersectIterator(s *ComparableSequence[T]) iter.Seq[T] {
-	return collection.IntersectIterator(c, s)
+func (c *ComparableSequence[T]) Intersected(s *ComparableSequence[T]) iter.Seq[T] {
+	return collection.Intersected(c, s)
 }
 
 // LastIndexOf returns the index of the last occurrence of the specified element in this sequence,

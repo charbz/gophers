@@ -211,9 +211,9 @@ func (l *List[T]) Concat(lists ...*List[T]) *List[T] {
 	return clone
 }
 
-// ConcatIterator is an alias for collection.ConcatIterator
-func (l *List[T]) ConcatIterator(l2 *List[T]) iter.Seq[T] {
-	return collection.ConcatIterator(l, l2)
+// Concatenated is an alias for collection.Concatenated
+func (l *List[T]) Concatenated(l2 *List[T]) iter.Seq[T] {
+	return collection.Concatenated(l, l2)
 }
 
 // Contains tests whether a predicate holds for at least one element of this list.
@@ -243,9 +243,9 @@ func (l *List[T]) Diff(s *List[T], f func(T, T) bool) *List[T] {
 	return collection.DiffFunc(l, s, f).(*List[T])
 }
 
-// DiffIterator is an alias for collection.DiffIteratorFunc
-func (l *List[T]) DiffIterator(s *List[T], f func(T, T) bool) iter.Seq[T] {
-	return collection.DiffIteratorFunc(l, s, f)
+// Diffed is an alias for collection.Diffed
+func (l *List[T]) Diffed(s *List[T], f func(T, T) bool) iter.Seq[T] {
+	return collection.DiffedFunc(l, s, f)
 }
 
 // Distinct takes an "equality" function as an argument such as
@@ -256,9 +256,9 @@ func (l *List[T]) Distinct(f func(T, T) bool) *List[T] {
 	return collection.Distinct(l, f).(*List[T])
 }
 
-// DistinctIterator is an alias for collection.DistinctIteratorFunc
-func (l *List[T]) DistinctIterator(f func(T, T) bool) iter.Seq[T] {
-	return collection.DistinctIteratorFunc(l, f)
+// Distincted is an alias for collection.Distincted
+func (l *List[T]) Distincted(f func(T, T) bool) iter.Seq[T] {
+	return collection.DistinctedFunc(l, f)
 }
 
 // Drop is an alias for collection.Drop
@@ -310,19 +310,14 @@ func (l *List[T]) Filter(f func(T) bool) *List[T] {
 	return collection.Filter(l, f).(*List[T])
 }
 
-// FilterIterator is an alias for collection.FilterIterator
-func (l *List[T]) FilterIterator(f func(T) bool) iter.Seq[T] {
-	return collection.FilterIterator(l, f)
+// Filtered is an alias for collection.Filtered
+func (l *List[T]) Filtered(f func(T) bool) iter.Seq[T] {
+	return collection.Filtered(l, f)
 }
 
 // FilterNot is an alias for collection.FilterNot
 func (l *List[T]) FilterNot(f func(T) bool) *List[T] {
 	return collection.FilterNot(l, f).(*List[T])
-}
-
-// FilterNotIterator is an alias for collection.RejectIterator
-func (l *List[T]) FilterNotIterator(f func(T) bool) iter.Seq[T] {
-	return collection.RejectIterator(l, f)
 }
 
 // Find is an alias for collection.Find
@@ -355,9 +350,9 @@ func (l *List[T]) Intersect(s *List[T], f func(T, T) bool) *List[T] {
 	return collection.IntersectFunc(l, s, f).(*List[T])
 }
 
-// IntersectIterator is an alias for collection.IntersectIteratorFunc
-func (l *List[T]) IntersectIterator(s *List[T], f func(T, T) bool) iter.Seq[T] {
-	return collection.IntersectIteratorFunc(l, s, f)
+// Intersected is an alias for collection.Intersected
+func (l *List[T]) Intersected(s *List[T], f func(T, T) bool) iter.Seq[T] {
+	return collection.IntersectedFunc(l, s, f)
 }
 
 // IsEmpty returns true if the list is empty.
@@ -421,9 +416,9 @@ func (l *List[T]) Reject(f func(T) bool) *List[T] {
 	return collection.FilterNot(l, f).(*List[T])
 }
 
-// RejectIterator is an alias for collection.RejectIterator
-func (l *List[T]) RejectIterator(f func(T) bool) iter.Seq[T] {
-	return collection.RejectIterator(l, f)
+// Rejected is an alias for collection.Rejected
+func (l *List[T]) Rejected(f func(T) bool) iter.Seq[T] {
+	return collection.Rejected(l, f)
 }
 
 // Take is an alias for collection.Take

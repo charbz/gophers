@@ -131,9 +131,9 @@ func (c *Sequence[T]) Concat(sequences ...Sequence[T]) *Sequence[T] {
 	return &Sequence[T]{e}
 }
 
-// ConcatIterator is an alias for collection.ConcatIterator
-func (c *Sequence[T]) ConcatIterator(s *Sequence[T]) iter.Seq[T] {
-	return collection.ConcatIterator(c, s)
+// Concatenated is an alias for collection.Concatenated
+func (c *Sequence[T]) Concatenated(s *Sequence[T]) iter.Seq[T] {
+	return collection.Concatenated(c, s)
 }
 
 // Contains tests whether a predicate holds for at least one element of this sequence.
@@ -162,9 +162,9 @@ func (c *Sequence[T]) Diff(s *Sequence[T], f func(T, T) bool) *Sequence[T] {
 	return collection.DiffFunc(c, s, f).(*Sequence[T])
 }
 
-// DiffIterator is an alias for collection.DiffIterator
-func (c *Sequence[T]) DiffIterator(s *Sequence[T], f func(T, T) bool) iter.Seq[T] {
-	return collection.DiffIteratorFunc(c, s, f)
+// Diffed is an alias for collection.Diffed
+func (c *Sequence[T]) Diffed(s *Sequence[T], f func(T, T) bool) iter.Seq[T] {
+	return collection.DiffedFunc(c, s, f)
 }
 
 // Distinct takes an "equality" function as an argument
@@ -175,8 +175,8 @@ func (c *Sequence[T]) Distinct(f func(T, T) bool) *Sequence[T] {
 }
 
 // DistinctIterator is an alias for collection.DistinctIterator
-func (c *Sequence[T]) DistinctIterator(f func(T, T) bool) iter.Seq[T] {
-	return collection.DistinctIteratorFunc(c, f)
+func (c *Sequence[T]) Distincted(f func(T, T) bool) iter.Seq[T] {
+	return collection.DistinctedFunc(c, f)
 }
 
 // Drop is an alias for collection.Drop
@@ -217,18 +217,13 @@ func (c *Sequence[T]) Filter(f func(T) bool) *Sequence[T] {
 }
 
 // FilterIterator is an alias for collection.FilterIterator
-func (c *Sequence[T]) FilterIterator(f func(T) bool) iter.Seq[T] {
-	return collection.FilterIterator(c, f)
+func (c *Sequence[T]) Filtered(f func(T) bool) iter.Seq[T] {
+	return collection.Filtered(c, f)
 }
 
 // FilterNot is an alias for collection.FilterNot
 func (c *Sequence[T]) FilterNot(f func(T) bool) *Sequence[T] {
 	return collection.FilterNot(c, f).(*Sequence[T])
-}
-
-// FilterNotIterator is an alias for collection.RejectIterator
-func (c *Sequence[T]) FilterNotIterator(f func(T) bool) iter.Seq[T] {
-	return collection.RejectIterator(c, f)
 }
 
 // Find is an alias for collection.Find
@@ -262,8 +257,8 @@ func (c *Sequence[T]) Intersect(s *Sequence[T], f func(T, T) bool) *Sequence[T] 
 }
 
 // IntersectIterator is an alias for collection.IntersectIterator
-func (c *Sequence[T]) IntersectIterator(s *Sequence[T], f func(T, T) bool) iter.Seq[T] {
-	return collection.IntersectIteratorFunc(c, s, f)
+func (c *Sequence[T]) Intersected(s *Sequence[T], f func(T, T) bool) iter.Seq[T] {
+	return collection.IntersectedFunc(c, s, f)
 }
 
 // IsEmpty returns true if the sequence is empty.
@@ -319,9 +314,9 @@ func (l *Sequence[T]) Reject(f func(T) bool) *Sequence[T] {
 	return collection.FilterNot(l, f).(*Sequence[T])
 }
 
-// RejectIterator is an alias for collection.RejectIterator
-func (c *Sequence[T]) RejectIterator(f func(T) bool) iter.Seq[T] {
-	return collection.RejectIterator(c, f)
+// Rejected is an alias for collection.Rejected
+func (c *Sequence[T]) Rejected(f func(T) bool) iter.Seq[T] {
+	return collection.Rejected(c, f)
 }
 
 // String implements the Stringer interface.

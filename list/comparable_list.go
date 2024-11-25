@@ -40,6 +40,31 @@ func NewComparableList[T cmp.Ordered](s ...[]T) *ComparableList[T] {
 	return list
 }
 
+// Clone returns a copy of the list. This is a shallow clone.
+func (l *ComparableList[T]) Clone() *ComparableList[T] {
+	clone := &ComparableList[T]{}
+	for v := range l.Values() {
+		clone.Add(v)
+	}
+	return clone
+}
+
+// Concat returns a new list concatenating the passed in lists.
+func (l *ComparableList[T]) Concat(lists ...*ComparableList[T]) *ComparableList[T] {
+	clone := l.Clone()
+	for _, list := range lists {
+		for v := range list.Values() {
+			clone.Add(v)
+		}
+	}
+	return clone
+}
+
+// Concatenated is an alias for collection.Concatenated
+func (l *ComparableList[T]) Concatenated(l2 *ComparableList[T]) iter.Seq[T] {
+	return collection.Concatenated(l, l2)
+}
+
 // Contains returns true if the list contains the given value.
 func (l *ComparableList[T]) Contains(v T) bool {
 	for val := range l.Values() {
@@ -48,6 +73,11 @@ func (l *ComparableList[T]) Contains(v T) bool {
 		}
 	}
 	return false
+}
+
+// Corresponds is an alias for collection.Corresponds
+func (l *ComparableList[T]) Corresponds(s *ComparableList[T], f func(T, T) bool) bool {
+	return collection.Corresponds(l, s, f)
 }
 
 // Distinct returns a new list containing only the unique elements from the original list.
@@ -64,9 +94,9 @@ func (l *ComparableList[T]) Distinct() *ComparableList[T] {
 	return r
 }
 
-// DistinctIterator is an alias for collection.DistinctIterator
-func (l *ComparableList[T]) DistinctIterator() iter.Seq[T] {
-	return collection.DistinctIterator(l)
+// Distincted is an alias for collection.Distincted
+func (l *ComparableList[T]) Distincted() iter.Seq[T] {
+	return collection.Distincted(l)
 }
 
 // Diff returns a new list containing the elements of the original list that are not in the other list.
@@ -74,9 +104,9 @@ func (l *ComparableList[T]) Diff(s *ComparableList[T]) *ComparableList[T] {
 	return collection.Diff(l, s).(*ComparableList[T])
 }
 
-// DiffIterator is an alias for collection.DiffIterator
-func (l *ComparableList[T]) DiffIterator(s *ComparableList[T]) iter.Seq[T] {
-	return collection.DiffIterator(l, s)
+// Diffed is an alias for collection.Diffed
+func (l *ComparableList[T]) Diffed(s *ComparableList[T]) iter.Seq[T] {
+	return collection.Diffed(l, s)
 }
 
 // Exists is an alias for Contains
@@ -116,9 +146,9 @@ func (l *ComparableList[T]) Intersect(s *ComparableList[T]) *ComparableList[T] {
 	return collection.Intersect(l, s).(*ComparableList[T])
 }
 
-// IntersectIterator is an alias for collection.IntersectIterator
-func (l *ComparableList[T]) IntersectIterator(s *ComparableList[T]) iter.Seq[T] {
-	return collection.IntersectIterator(l, s)
+// Intersected is an alias for collection.Intersected
+func (l *ComparableList[T]) Intersected(s *ComparableList[T]) iter.Seq[T] {
+	return collection.Intersected(l, s)
 }
 
 // LastIndexOf returns the index of the last occurrence of the specified element in this list,

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestConcatIterator(t *testing.T) {
+func TestConcatenated(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -41,17 +41,17 @@ func TestConcatIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range ConcatIterator(tt.a, tt.b) {
+			for v := range Concatenated(tt.a, tt.b) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("ConcatIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Concatenated() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestDiffIterator(t *testing.T) {
+func TestDiffed(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -87,17 +87,17 @@ func TestDiffIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range DiffIterator(tt.a, tt.b) {
+			for v := range Diffed(tt.a, tt.b) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("DiffIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Diffed() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestDiffIteratorFunc(t *testing.T) {
+func TestDiffedFunc(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -133,17 +133,17 @@ func TestDiffIteratorFunc(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range DiffIteratorFunc(tt.a, tt.b, func(a, b int) bool { return a == b }) {
+			for v := range DiffedFunc(tt.a, tt.b, func(a, b int) bool { return a == b }) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("DiffIteratorFunc() = %v, want %v", collected, tt.want)
+				t.Errorf("DiffedFunc() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestDistinctIterator(t *testing.T) {
+func TestDistincted(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -169,17 +169,17 @@ func TestDistinctIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range DistinctIterator(tt.a) {
+			for v := range Distincted(tt.a) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("DistinctIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Distincted() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestDistinctIteratorFunc(t *testing.T) {
+func TestDistinctedFunc(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -205,17 +205,17 @@ func TestDistinctIteratorFunc(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range DistinctIteratorFunc(tt.a, func(a, b int) bool { return a == b }) {
+			for v := range DistinctedFunc(tt.a, func(a, b int) bool { return a == b }) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("DistinctIteratorFunc() = %v, want %v", collected, tt.want)
+				t.Errorf("DistinctedFunc() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestIntersectIterator(t *testing.T) {
+func TestIntersected(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -233,17 +233,17 @@ func TestIntersectIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range IntersectIterator(tt.a, tt.b) {
+			for v := range Intersected(tt.a, tt.b) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("IntersectIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Intersected() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestIntersectIteratorFunc(t *testing.T) {
+func TestIntersectedFunc(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -261,17 +261,17 @@ func TestIntersectIteratorFunc(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range IntersectIteratorFunc(tt.a, tt.b, func(a, b int) bool { return a == b }) {
+			for v := range IntersectedFunc(tt.a, tt.b, func(a, b int) bool { return a == b }) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("IntersectIteratorFunc() = %v, want %v", collected, tt.want)
+				t.Errorf("IntersectedFunc() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestFilterIterator(t *testing.T) {
+func TestFiltered(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -297,17 +297,17 @@ func TestFilterIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range FilterIterator(tt.a, func(i int) bool { return i%2 == 0 }) {
+			for v := range Filtered(tt.a, func(i int) bool { return i%2 == 0 }) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("FilterIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Filtered() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestMapIterator(t *testing.T) {
+func TestMapped(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -328,17 +328,17 @@ func TestMapIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range MapIterator(tt.a, func(i int) int { return i * 2 }) {
+			for v := range Mapped(tt.a, func(i int) int { return i * 2 }) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("MapIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Mapped() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
 }
 
-func TestRejectIterator(t *testing.T) {
+func TestRejected(t *testing.T) {
 	tests := []struct {
 		name string
 		a    OrderedCollection[int]
@@ -364,11 +364,11 @@ func TestRejectIterator(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			collected := []int{}
-			for v := range RejectIterator(tt.a, func(i int) bool { return i%2 == 0 }) {
+			for v := range Rejected(tt.a, func(i int) bool { return i%2 == 0 }) {
 				collected = append(collected, v)
 			}
 			if !slices.Equal(collected, tt.want) {
-				t.Errorf("RejectIterator() = %v, want %v", collected, tt.want)
+				t.Errorf("Rejected() = %v, want %v", collected, tt.want)
 			}
 		})
 	}
