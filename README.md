@@ -226,6 +226,12 @@ for i := range A.Diffed(B) {
 }
 // diffed 1
 // diffed 3
+
+for i := range A.Intersected(B) {
+  fmt.Printf("intersected %v\n", i)
+}
+// intersected 2
+// intersected 2    // (A is not a set)
 ```
 
 ### Sequence Operations
