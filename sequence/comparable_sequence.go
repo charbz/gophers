@@ -6,6 +6,7 @@ package sequence
 
 import (
 	"cmp"
+	"iter"
 	"slices"
 
 	"github.com/charbz/gophers/collection"
@@ -55,8 +56,19 @@ func (c *ComparableSequence[T]) Distinct() *ComparableSequence[T] {
 	return r
 }
 
+// DistinctIterator is an alias for collection.DistinctIterator
+func (c *ComparableSequence[T]) DistinctIterator() iter.Seq[T] {
+	return collection.DistinctIterator(c)
+}
+
+// Diff is an alias for collection.Diff
 func (c *ComparableSequence[T]) Diff(s *ComparableSequence[T]) *ComparableSequence[T] {
 	return collection.Diff(c, s).(*ComparableSequence[T])
+}
+
+// DiffIterator is an alias for collection.DiffIterator
+func (c *ComparableSequence[T]) DiffIterator(s *ComparableSequence[T]) iter.Seq[T] {
+	return collection.DiffIterator(c, s)
 }
 
 // Equals returns true if the two sequences are equal.
@@ -75,6 +87,16 @@ func (c *ComparableSequence[T]) IndexOf(v T) int {
 	return slices.Index(c.elements, v)
 }
 
+// Intersect returns a new sequence containing the elements that are present in both sequences.
+func (c *ComparableSequence[T]) Intersect(s *ComparableSequence[T]) *ComparableSequence[T] {
+	return collection.Intersect(c, s).(*ComparableSequence[T])
+}
+
+// IntersectIterator is an alias for collection.IntersectIterator
+func (c *ComparableSequence[T]) IntersectIterator(s *ComparableSequence[T]) iter.Seq[T] {
+	return collection.IntersectIterator(c, s)
+}
+
 // LastIndexOf returns the index of the last occurrence of the specified element in this sequence,
 // or -1 if this sequence does not contain the element.
 func (c *ComparableSequence[T]) LastIndexOf(v T) int {
@@ -86,14 +108,17 @@ func (c *ComparableSequence[T]) LastIndexOf(v T) int {
 	return -1
 }
 
+// Max returns the maximum value in the sequence.
 func (c *ComparableSequence[T]) Max() T {
 	return slices.Max(c.elements)
 }
 
+// Min returns the minimum value in the sequence.
 func (c *ComparableSequence[T]) Min() T {
 	return slices.Min(c.elements)
 }
 
+// Sum returns the sum of the elements in the sequence.
 func (c *ComparableSequence[T]) Sum() T {
 	var sum T
 	for _, v := range c.elements {
@@ -102,10 +127,12 @@ func (c *ComparableSequence[T]) Sum() T {
 	return sum
 }
 
+// StartsWith returns true if the sequence starts with the given sequence.
 func (c *ComparableSequence[T]) StartsWith(other *ComparableSequence[T]) bool {
 	return collection.StartsWith(c, other)
 }
 
+// EndsWith returns true if the sequence ends with the given sequence.
 func (c *ComparableSequence[T]) EndsWith(other *ComparableSequence[T]) bool {
 	return collection.EndsWith(c, other)
 }

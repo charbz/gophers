@@ -6,6 +6,7 @@ package list
 
 import (
 	"cmp"
+	"iter"
 
 	"github.com/charbz/gophers/collection"
 )
@@ -18,11 +19,11 @@ type ComparableList[T cmp.Ordered] struct {
 	List[T]
 }
 
-func (c *ComparableList[T]) New(s ...[]T) collection.Collection[T] {
+func (l *ComparableList[T]) New(s ...[]T) collection.Collection[T] {
 	return NewComparableList(s...)
 }
 
-func (c *ComparableList[T]) NewOrdered(s ...[]T) collection.OrderedCollection[T] {
+func (l *ComparableList[T]) NewOrdered(s ...[]T) collection.OrderedCollection[T] {
 	return NewComparableList(s...)
 }
 
@@ -63,9 +64,19 @@ func (l *ComparableList[T]) Distinct() *ComparableList[T] {
 	return r
 }
 
+// DistinctIterator is an alias for collection.DistinctIterator
+func (l *ComparableList[T]) DistinctIterator() iter.Seq[T] {
+	return collection.DistinctIterator(l)
+}
+
 // Diff returns a new list containing the elements of the original list that are not in the other list.
 func (l *ComparableList[T]) Diff(s *ComparableList[T]) *ComparableList[T] {
 	return collection.Diff(l, s).(*ComparableList[T])
+}
+
+// DiffIterator is an alias for collection.DiffIterator
+func (l *ComparableList[T]) DiffIterator(s *ComparableList[T]) iter.Seq[T] {
+	return collection.DiffIterator(l, s)
 }
 
 // Exists is an alias for Contains
@@ -100,6 +111,16 @@ func (l *ComparableList[T]) IndexOf(v T) int {
 	return -1
 }
 
+// Intersect returns a new list containing the elements that are present in both lists.
+func (l *ComparableList[T]) Intersect(s *ComparableList[T]) *ComparableList[T] {
+	return collection.Intersect(l, s).(*ComparableList[T])
+}
+
+// IntersectIterator is an alias for collection.IntersectIterator
+func (l *ComparableList[T]) IntersectIterator(s *ComparableList[T]) iter.Seq[T] {
+	return collection.IntersectIterator(l, s)
+}
+
 // LastIndexOf returns the index of the last occurrence of the specified element in this list,
 func (l *ComparableList[T]) LastIndexOf(v T) int {
 	for i, val := range l.Backward() {
@@ -129,10 +150,12 @@ func (l *ComparableList[T]) Sum() T {
 	return sum
 }
 
-func (c *ComparableList[T]) StartsWith(other *ComparableList[T]) bool {
-	return collection.StartsWith(c, other)
+// StartsWith returns true if the list starts with the given list.
+func (l *ComparableList[T]) StartsWith(other *ComparableList[T]) bool {
+	return collection.StartsWith(l, other)
 }
 
-func (c *ComparableList[T]) EndsWith(other *ComparableList[T]) bool {
-	return collection.EndsWith(c, other)
+// EndsWith returns true if the list ends with the given list.
+func (l *ComparableList[T]) EndsWith(other *ComparableList[T]) bool {
+	return collection.EndsWith(l, other)
 }

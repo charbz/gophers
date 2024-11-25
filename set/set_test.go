@@ -521,3 +521,5 @@ func assertEqualValues[T cmp.Ordered](a []T, b []T) bool {
 	slices.Sort(b)
 	return slices.Equal(a, b)
 }
+
+//TODO: Add tests for iterators

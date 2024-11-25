@@ -173,6 +173,11 @@ func (l *List[T]) String() string {
 	return fmt.Sprintf("List(%T) %v", *new(T), l.ToSlice())
 }
 
+// The following methods are specific to the List type.
+// most of them are aliases for Collection Functions,
+// the reason for defining them here is to provide a more
+// idiomatic API for working with lists, enabling method chaining.
+
 // Apply applies a function to each element in the list.
 func (l *List[T]) Apply(f func(T) T) *List[T] {
 	for node := l.head; node != nil; node = node.next {
@@ -206,6 +211,11 @@ func (l *List[T]) Concat(lists ...*List[T]) *List[T] {
 	return clone
 }
 
+// ConcatIterator is an alias for collection.ConcatIterator
+func (l *List[T]) ConcatIterator(l2 *List[T]) iter.Seq[T] {
+	return collection.ConcatIterator(l, l2)
+}
+
 // Contains tests whether a predicate holds for at least one element of this list.
 func (l *List[T]) Contains(f func(T) bool) bool {
 	i, _ := collection.Find(l, f)
@@ -228,12 +238,27 @@ func (l *List[T]) Dequeue() (T, error) {
 	return element, nil
 }
 
+// Diff is an alias for collection.DiffFunc
+func (l *List[T]) Diff(s *List[T], f func(T, T) bool) *List[T] {
+	return collection.DiffFunc(l, s, f).(*List[T])
+}
+
+// DiffIterator is an alias for collection.DiffIteratorFunc
+func (l *List[T]) DiffIterator(s *List[T], f func(T, T) bool) iter.Seq[T] {
+	return collection.DiffIteratorFunc(l, s, f)
+}
+
 // Distinct takes an "equality" function as an argument such as
 // func(a T, b T) bool {return a == b}
 // and returns a new sequence containing all the unique elements.
 // If you don't want to pass an equality function use a ComparableList.
 func (l *List[T]) Distinct(f func(T, T) bool) *List[T] {
 	return collection.Distinct(l, f).(*List[T])
+}
+
+// DistinctIterator is an alias for collection.DistinctIteratorFunc
+func (l *List[T]) DistinctIterator(f func(T, T) bool) iter.Seq[T] {
+	return collection.DistinctIteratorFunc(l, f)
 }
 
 // Drop is an alias for collection.Drop
@@ -285,9 +310,19 @@ func (l *List[T]) Filter(f func(T) bool) *List[T] {
 	return collection.Filter(l, f).(*List[T])
 }
 
+// FilterIterator is an alias for collection.FilterIterator
+func (l *List[T]) FilterIterator(f func(T) bool) iter.Seq[T] {
+	return collection.FilterIterator(l, f)
+}
+
 // FilterNot is an alias for collection.FilterNot
 func (l *List[T]) FilterNot(f func(T) bool) *List[T] {
 	return collection.FilterNot(l, f).(*List[T])
+}
+
+// FilterNotIterator is an alias for collection.RejectIterator
+func (l *List[T]) FilterNotIterator(f func(T) bool) iter.Seq[T] {
+	return collection.RejectIterator(l, f)
 }
 
 // Find is an alias for collection.Find
@@ -313,6 +348,16 @@ func (l *List[T]) Head() (T, error) {
 // Init is an alias for collection.Init
 func (l *List[T]) Init() *List[T] {
 	return collection.Init(l).(*List[T])
+}
+
+// Intersect is an alias for collection.IntersectFunc
+func (l *List[T]) Intersect(s *List[T], f func(T, T) bool) *List[T] {
+	return collection.IntersectFunc(l, s, f).(*List[T])
+}
+
+// IntersectIterator is an alias for collection.IntersectIteratorFunc
+func (l *List[T]) IntersectIterator(s *List[T], f func(T, T) bool) iter.Seq[T] {
+	return collection.IntersectIteratorFunc(l, s, f)
 }
 
 // IsEmpty returns true if the list is empty.
@@ -374,6 +419,11 @@ func (l *List[T]) Reverse() *List[T] {
 // Reject is an alias for collection.FilterNot
 func (l *List[T]) Reject(f func(T) bool) *List[T] {
 	return collection.FilterNot(l, f).(*List[T])
+}
+
+// RejectIterator is an alias for collection.RejectIterator
+func (l *List[T]) RejectIterator(f func(T) bool) iter.Seq[T] {
+	return collection.RejectIterator(l, f)
 }
 
 // Take is an alias for collection.Take
