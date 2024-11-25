@@ -58,6 +58,31 @@ func Diff[T comparable](s1 Collection[T], s2 Collection[T]) Collection[T] {
 	})
 }
 
+// DiffFunc is similar to Diff but applies to non-comparable types.
+// It takes two collections (s1, s2) and an "equality" function as an argument such as
+// func(a T, b T) bool {return a == b}
+// and returns a new sequence containing all the elements of s1 that are not present in s2.
+//
+// example usage:
+//
+//	c1 := NewSequence([]int{1,2,3,4,5,6})
+//	c2 := NewSequence([]int{2,4,6,8,10,12})
+//	DiffFunc(c1, c2, func(a int, b int) bool { return a == b })
+//
+// output:
+//
+//	[1,3,5]
+func DiffFunc[T any](s1 Collection[T], s2 Collection[T], f func(T, T) bool) Collection[T] {
+	return FilterNot(s1, func(t T) bool {
+		for v := range s2.Values() {
+			if f(t, v) {
+				return true
+			}
+		}
+		return false
+	})
+}
+
 // Distinct returns a new collection containing only the unique elements of the collection.
 //
 // example usage:
@@ -178,6 +203,31 @@ func Intersect[T comparable](s1 Collection[T], s2 Collection[T]) Collection[T] {
 	return Filter(s1, func(t T) bool {
 		for v := range s2.Values() {
 			if v == t {
+				return true
+			}
+		}
+		return false
+	})
+}
+
+// IntersectFunc is similar to Intersect but applies to non-comparable types.
+// It takes two collections (s1, s2) and an "equality" function as an argument such as
+// func(a T, b T) bool {return a == b}
+// and returns a new sequence containing all the elements of s1 that are also present in s2.
+//
+// example usage:
+//
+//	c1 := NewSequence([]int{1,2,3,4,5,6})
+//	c2 := NewSequence([]int{2,4,6,8,10,12})
+//	IntersectFunc(c1, c2, func(a int, b int) bool { return a == b })
+//
+// output:
+//
+//	[2,4,6]
+func IntersectFunc[T any](s1 Collection[T], s2 Collection[T], f func(T, T) bool) Collection[T] {
+	return Filter(s1, func(t T) bool {
+		for v := range s2.Values() {
+			if f(t, v) {
 				return true
 			}
 		}

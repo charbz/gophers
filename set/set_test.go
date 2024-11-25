@@ -108,6 +108,47 @@ func TestSet_Union(t *testing.T) {
 	}
 }
 
+func TestSet_Unioned(t *testing.T) {
+	tests := []struct {
+		name   string
+		base   []int
+		others []int
+		want   []int
+	}{
+		{
+			name:   "union with empty set",
+			base:   []int{1, 2, 3},
+			others: []int{},
+			want:   []int{1, 2, 3},
+		},
+		{
+			name:   "union with non-empty set",
+			base:   []int{1, 2, 3},
+			others: []int{3, 4, 5},
+			want:   []int{1, 2, 3, 4, 5},
+		},
+		{
+			name:   "union with no change",
+			base:   []int{1, 2},
+			others: []int{2, 1},
+			want:   []int{1, 2},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := []int{}
+			s := NewSet(tt.base)
+			for v := range s.Unioned(NewSet(tt.others)) {
+				got = append(got, v)
+			}
+			if !assertEqualValues(got, tt.want) {
+				t.Errorf("UnionIterator() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestSet_Intersection(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -147,6 +188,53 @@ func TestSet_Intersection(t *testing.T) {
 			result := s.Intersection(NewSet(tt.others))
 			if !assertEqualValues(result.ToSlice(), tt.want) {
 				t.Errorf("Intersection() = %v, want %v", result.ToSlice(), tt.want)
+			}
+		})
+	}
+}
+
+func TestSet_Intersected(t *testing.T) {
+	tests := []struct {
+		name   string
+		base   []int
+		others []int
+		want   []int
+	}{
+		{
+			name:   "intersection with empty set",
+			base:   []int{1, 2, 3},
+			others: []int{},
+			want:   []int{},
+		},
+		{
+			name:   "intersection with non-empty set",
+			base:   []int{1, 2, 3},
+			others: []int{2, 3, 4},
+			want:   []int{2, 3},
+		},
+		{
+			name:   "intersection with non-empty set 2",
+			base:   []int{1, 2, 3, 4},
+			others: []int{4, 5, 6},
+			want:   []int{4},
+		},
+		{
+			name:   "intersection with no overlap",
+			base:   []int{1, 2, 3, 4},
+			others: []int{5, 6, 7},
+			want:   []int{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := []int{}
+			s := NewSet(tt.base)
+			for v := range s.Intersected(NewSet(tt.others)) {
+				got = append(got, v)
+			}
+			if !assertEqualValues(got, tt.want) {
+				t.Errorf("IntersectionIterator() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -508,6 +596,40 @@ func TestSet_Reject(t *testing.T) {
 			result := s.Reject(tt.predicate)
 			if !assertEqualValues(result.ToSlice(), tt.want) {
 				t.Errorf("Reject() = %v, want %v", result.ToSlice(), tt.want)
+			}
+		})
+	}
+}
+
+func TestDiffIterator(t *testing.T) {
+	tests := []struct {
+		name string
+		a    *Set[int]
+		b    *Set[int]
+		want []int
+	}{
+		{
+			name: "diff with empty set",
+			a:    NewSet([]int{1, 2, 3}),
+			b:    NewSet([]int{}),
+			want: []int{1, 2, 3},
+		},
+		{
+			name: "diff with non-empty set",
+			a:    NewSet([]int{1, 2, 3, 5, 6}),
+			b:    NewSet([]int{2, 3, 4}),
+			want: []int{1, 5, 6},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			collected := []int{}
+			for v := range tt.a.DiffIterator(tt.b) {
+				collected = append(collected, v)
+			}
+			if !assertEqualValues(collected, tt.want) {
+				t.Errorf("DiffIterator() = %v, want %v", collected, tt.want)
 			}
 		})
 	}

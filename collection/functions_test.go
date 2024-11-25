@@ -49,6 +49,49 @@ func TestDiff(t *testing.T) {
 	}
 }
 
+func TestDiffFunc(t *testing.T) {
+	tests := []struct {
+		name string
+		a    []int
+		b    []int
+		diff []int
+	}{
+		{name: "diff", a: []int{1, 2, 3, 4, 5, 6}, b: []int{2, 4, 6, 8, 10, 12}, diff: []int{1, 3, 5}},
+		{name: "diff with empty b", a: []int{1, 2, 3, 4, 5, 6}, b: []int{}, diff: []int{1, 2, 3, 4, 5, 6}},
+		{name: "diff with empty a", a: []int{}, b: []int{1, 2, 3, 4, 5, 6}, diff: nil},
+		{name: "diff with same elements", a: []int{1, 2, 3, 4, 3, 6}, b: []int{1, 2, 3, 4, 5, 6}, diff: nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := DiffFunc(NewMockCollection(tt.a), NewMockCollection(tt.b), func(a, b int) bool { return a == b }).(*MockCollection[int]).items
+			want := NewMockCollection(tt.diff).items
+			if !slices.Equal(got, want) {
+				t.Errorf("DiffFunc() = %v, want %v", got, want)
+			}
+		})
+	}
+}
+
+func TestDistinct(t *testing.T) {
+	tests := []struct {
+		name string
+		a    []int
+		want []int
+	}{
+		{name: "distinct", a: []int{1, 1, 1, 2, 2, 3}, want: []int{1, 2, 3}},
+		{name: "distinct with no duplicates", a: []int{1, 2, 3, 4, 5, 6, 7, 8, 9}, want: []int{1, 2, 3, 4, 5, 6, 7, 8, 9}},
+		{name: "distinct with empty collection", a: []int{}, want: []int{}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Distinct(NewMockCollection(tt.a), func(a, b int) bool { return a == b }).(*MockCollection[int]).items
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("DistinctFunc() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestReduce(t *testing.T) {
 	sum := func(acc, curr int) int { return acc + curr }
 
@@ -263,6 +306,44 @@ func TestIntersect(t *testing.T) {
 			want := NewMockCollection(tt.want)
 			if !slices.Equal(got.(*MockCollection[int]).items, want.items) {
 				t.Errorf("Intersect() = %v, want %v", got, want)
+			}
+		})
+	}
+}
+
+func TestIntersectFunc(t *testing.T) {
+	tests := []struct {
+		name string
+		a    []int
+		b    []int
+		want []int
+	}{
+		{
+			name: "intersect",
+			a:    []int{1, 2, 3, 4, 5, 6},
+			b:    []int{2, 4, 6, 8, 10},
+			want: []int{2, 4, 6},
+		},
+		{
+			name: "no intersection",
+			a:    []int{1, 3, 5},
+			b:    []int{2, 4, 6},
+			want: nil,
+		},
+		{
+			name: "empty slices",
+			a:    []int{},
+			b:    []int{},
+			want: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := IntersectFunc(NewMockCollection(tt.a), NewMockCollection(tt.b), func(a, b int) bool { return a == b })
+			want := NewMockCollection(tt.want)
+			if !slices.Equal(got.(*MockCollection[int]).items, want.items) {
+				t.Errorf("IntersectFunc() = %v, want %v", got, want)
 			}
 		})
 	}

@@ -82,9 +82,14 @@ func (s *Set[T]) String() string {
 // wrapping Collection functions to enable function chaining:
 // i.e. set.Filter(f).Foreach(f2)
 
-// Remove removes a value from the set.
-func (s *Set[T]) Remove(v T) {
-	delete(s.elements, v)
+// Apply applies a function to each element in the set.
+func (s *Set[T]) Apply(f func(T) T) *Set[T] {
+	for k := range s.elements {
+		v := f(k)
+		s.Remove(k)
+		s.Add(v)
+	}
+	return s
 }
 
 // Clone returns a copy of the collection. This is a shallow clone.
@@ -123,6 +128,17 @@ func (s *Set[T]) Diff(set *Set[T]) *Set[T] {
 	return newSet
 }
 
+// DiffIterator returns an iterator over the difference of the current set and the passed in set.
+func (s *Set[T]) DiffIterator(set *Set[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for k := range s.elements {
+			if !set.Contains(k) {
+				yield(k)
+			}
+		}
+	}
+}
+
 // Equals returns true if the two sets contain the same elements.
 func (s *Set[T]) Equals(s2 *Set[T]) bool {
 	if s.Length() != s2.Length() {
@@ -141,24 +157,14 @@ func (s *Set[T]) Filter(f func(T) bool) *Set[T] {
 	return collection.Filter(s, f).(*Set[T])
 }
 
+// Filtered is an alias for collection.Filtered
+func (s *Set[T]) Filtered(f func(T) bool) iter.Seq[T] {
+	return collection.Filtered(s, f)
+}
+
 // FilterNot is an alias for collection.FilterNot
 func (s *Set[T]) FilterNot(f func(T) bool) *Set[T] {
 	return collection.FilterNot(s, f).(*Set[T])
-}
-
-// Reject is an alias for collection.FilterNot
-func (l *Set[T]) Reject(f func(T) bool) *Set[T] {
-	return collection.FilterNot(l, f).(*Set[T])
-}
-
-// Apply applies a function to each element in the set.
-func (s *Set[T]) Apply(f func(T) T) *Set[T] {
-	for k := range s.elements {
-		v := f(k)
-		s.Remove(k)
-		s.Add(v)
-	}
-	return s
 }
 
 // ForAll is an alias for collection.ForAll
@@ -182,6 +188,18 @@ func (s *Set[T]) Intersection(s2 *Set[T]) *Set[T] {
 	return result
 }
 
+// Intersected returns an iterator over the intersection of
+// the current set and the passed in set.
+func (s *Set[T]) Intersected(s2 *Set[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for k := range s.elements {
+			if s2.Contains(k) {
+				yield(k)
+			}
+		}
+	}
+}
+
 // NonEmpty returns true if the set is not empty.
 func (s *Set[T]) NonEmpty() bool {
 	return s.Length() > 0
@@ -193,6 +211,21 @@ func (s *Set[T]) Partition(f func(T) bool) (*Set[T], *Set[T]) {
 	return left.(*Set[T]), right.(*Set[T])
 }
 
+// Remove removes a value from the set.
+func (s *Set[T]) Remove(v T) {
+	delete(s.elements, v)
+}
+
+// Reject is an alias for collection.FilterNot
+func (l *Set[T]) Reject(f func(T) bool) *Set[T] {
+	return collection.FilterNot(l, f).(*Set[T])
+}
+
+// Rejected is an alias for collection.Rejected
+func (s *Set[T]) Rejected(f func(T) bool) iter.Seq[T] {
+	return collection.Rejected(s, f)
+}
+
 // Union returns a new set containing the union of the current set and the passed in set.
 func (s *Set[T]) Union(s2 *Set[T]) *Set[T] {
 	result := s.Clone()
@@ -200,4 +233,18 @@ func (s *Set[T]) Union(s2 *Set[T]) *Set[T] {
 		result.Add(k)
 	}
 	return result
+}
+
+// Unioned returns an iterator over the union of the current set and the passed in set.
+func (s *Set[T]) Unioned(s2 *Set[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for k := range s.elements {
+			yield(k)
+		}
+		for k := range s2.elements {
+			if !s.Contains(k) {
+				yield(k)
+			}
+		}
+	}
 }

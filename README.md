@@ -43,7 +43,7 @@ foos := list.NewList([]Foo{
 foos.Filter(func(f Foo) bool { return f.a%2 == 0 }) 
 // List[Foo] {{2 two} {4 four}}
 
-foos.FilterNot(func(f Foo) bool { return f.a%2 == 0 }) 
+foos.Reject(func(f Foo) bool { return f.a%2 == 0 }) 
 // List[Foo] {{1 one} {3 three} {5 five}}
 
 foos.Find(func(f Foo) bool { return f.a == 3 }) 
@@ -174,6 +174,60 @@ collection.Reduce(foos, func(acc int, f Foo) int { return acc + f.a }, 0) // 15
 collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 0: [{2 two}, {4 four}], 1: [{1 one}, {3 three}, {5 five}]}
 ```
 
+**Note:** Given that methods cannot define new type parameters in Go, any function that produces a new type, for example `Map(List[T], func(T) K) -> List[K]`, 
+must be called as a function similar to the examples above and cannot be made into a method of the collection type i.e. `List[T].Map(func(T) K) -> List[K]`.
+This is a minor inconvenience as it breaks the consistency of the API but is a limitation of the language.
+
+### Iterator Methods
+
+All collections implement methods that return iterators over the result as opposed to returning the result itself.
+This is useful when combined with the `for ... range` syntax to iterate over the result.
+
+```go
+import (
+  "github.com/charbz/gophers/list"
+)
+
+A := list.NewComparableList([]int{1, 2, 2, 3})
+B := list.NewComparableList([]int{4, 5, 2})
+
+for i := range A.Filtered(func(v int) bool { return v%2 == 0 }) {
+  fmt.Printf("filtered %v\n", i)
+}
+// filtered 2
+// filtered 2
+
+for i := range A.Rejected(func(v int) bool { return v%2 == 0 }) {
+  fmt.Printf("rejected %v\n", i)
+}
+// rejected 1
+// rejected 3
+
+for i := range A.Distincted() {
+  fmt.Printf("distincted %v\n", i)
+}
+// distincted 1
+// distincted 2
+// distincted 3
+
+for i := range A.Concatenated(B) {
+  fmt.Printf("concatenated %v\n", i)
+}
+// concatenated 1
+// concatenated 2
+// concatenated 2
+// concatenated 3
+// concatenated 4
+// concatenated 5
+// concatenated 2
+
+for i := range A.Diffed(B) {
+  fmt.Printf("diffed %v\n", i)
+}
+// diffed 1
+// diffed 3
+```
+
 ### Sequence Operations
 
 - `Add(element)` - Append element to sequence
@@ -183,11 +237,15 @@ collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 
 - `Backward()` - Get reverse iterator over elements
 - `Clone()` - Create shallow copy of sequence
 - `Concat(sequences...)` - Concatenates any passed sequences
+- `Concatenated(sequence)` - Get iterator over concatenated sequence
 - `Contains(predicate)` - Test if any element matches predicate
 - `Corresponds(sequence, function)` - Test element-wise correspondence
 - `Count(predicate)` - Count elements matching predicate
 - `Dequeue()` - Remove and return first element
+- `Diff(sequence, function)` - Get elements in first sequence but not in second
+- `Diffed(sequence, function)` - Get iterator over elements in first sequence but not in second
 - `Distinct(function)` - Get unique elements using equality function
+- `Distincted()` - Get unique elements using equality comparison
 - `Drop(n)` - Drop first n elements
 - `DropRight(n)` - Drop last n elements
 - `DropWhile(predicate)` - Drop elements while predicate is true
@@ -201,6 +259,8 @@ collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 
 - `ForAll(predicate)` - Test if predicate holds for all elements
 - `Head()` - Get first element
 - `Init()` - Get all elements except last
+- `Intersect(sequence, function)` - Get elements present in both sequences
+- `Intersected(sequence, function)` - Get iterator over elements present in both sequences
 - `IsEmpty()` - Test if sequence is empty
 - `Last()` - Get last element
 - `Length()` - Get number of elements
@@ -212,6 +272,8 @@ collection.GroupBy(foos, func(f Foo) int { return f.a % 2 }) // Map[int][]Foo { 
 - `Push(element)` - Add element to end
 - `Random()` - Get random element
 - `Reverse()` - Reverse order of elements
+- `Reject(predicate)` - Inverse filter operation
+- `Rejected(predicate)` - Get iterator over elements rejected by predicate
 - `Slice(start, end)` - Get subsequence from start to end
 - `SplitAt(n)` - Split sequence at index n
 - `String()` - Get string representation
@@ -245,11 +307,15 @@ Inherits all operations from Sequence, but with the following additional operati
 - `Backward()` - Get reverse iterator over index/value pairs
 - `Clone()` - Create shallow copy
 - `Concat(lists...)` - Concatenate multiple lists
+- `Concatenated(list)` - Get iterator over concatenated list
 - `Contains(predicate)` - Test if any element matches predicate
 - `Corresponds(list, function)` - Test element-wise correspondence
 - `Count(predicate)` - Count elements matching predicate
 - `Dequeue()` - Remove and return first element
+- `Diff(list, function)` - Get elements in first list but not in second
+- `Diffed(list, function)` - Get iterator over elements in first list but not in second
 - `Distinct(function)` - Get unique elements using equality function
+- `Distincted()` - Get unique elements using equality comparison
 - `Drop(n)` - Drop first n elements
 - `DropRight(n)` - Drop last n elements
 - `DropWhile(predicate)` - Drop elements while predicate is true
@@ -263,6 +329,8 @@ Inherits all operations from Sequence, but with the following additional operati
 - `ForAll(predicate)` - Test if predicate holds for all elements
 - `Head()` - Get first element
 - `Init()` - Get all elements except last
+- `Intersect(list, function)` - Get elements present in both lists
+- `Intersected(list, function)` - Get iterator over elements present in both lists
 - `IsEmpty()` - Test if list is empty
 - `Last()` - Get last element
 - `Length()` - Get number of elements
@@ -274,6 +342,8 @@ Inherits all operations from Sequence, but with the following additional operati
 - `Push(element)` - Add element to end
 - `Random()` - Get random element
 - `Reverse()` - Reverse order of elements
+- `Reject(predicate)` - Inverse filter operation
+- `Rejected(predicate)` - Get iterator over elements rejected by predicate
 - `Slice(start, end)` - Get sublist from start to end
 - `SplitAt(n)` - Split list at index n
 - `String()` - Get string representation
@@ -308,11 +378,13 @@ Inherits all operations from List, but with the following additional operations:
 - `ContainsFunc(predicate)` - Test if set contains element matching predicate
 - `Count(predicate)` - Count elements matching predicate
 - `Diff(set)` - Get elements in first set but not in second
+- `Diffed(set)` - Get iterator over elements in first set but not in second
 - `Equals(set)` - Test set equality
 - `Filter(predicate)` - Filter elements based on predicate
 - `FilterNot(predicate)` - Inverse filter operation
 - `ForAll(predicate)` - Test if predicate holds for all elements
 - `Intersection(set)` - Get elements present in both sets
+- `Intersected(set)` - Get iterator over elements present in both sets
 - `IsEmpty()` - Test if set is empty
 - `Length()` - Get number of elements
 - `New(slices...)` - Create new set
@@ -320,9 +392,12 @@ Inherits all operations from List, but with the following additional operations:
 - `Partition(predicate)` - Split set based on predicate
 - `Random()` - Get random element
 - `Remove(element)` - Remove element from set
+- `Reject(predicate)` - Inverse filter operation
+- `Rejected(predicate)` - Get iterator over elements rejected by predicate
 - `String()` - Get string representation
 - `ToSlice()` - Convert to Go slice
 - `Union(set)` - Get elements present in either set
+- `Unioned(set)` - Get iterator over elements present in either set
 - `Values()` - Get iterator over values
 
 
@@ -360,6 +435,13 @@ The package functions below can be called on ordered collections (Sequence, Comp
 - `Tail(collection)` - Get all elements except first
 - `Take(collection, n)` - Get first n elements
 - `TakeRight(collection, n)` - Get last n elements
+
+The following package functions return an iterator for the result:
+- `Concatenated(collection1, collection2)` - Get iterator over concatenated collection
+- `Diffed(collection1, collection2, function)` - Get iterator over elements in first collection but not in second
+- `Intersected(collection1, collection2, function)` - Get iterator over elements present in both collections
+- `Mapped(collection, function)` - Get iterator over elements transformed by function
+- `Rejected(collection, predicate)` - Get iterator over elements rejected by predicate
 
 
 ## Contributing
