@@ -1,6 +1,7 @@
 package list
 
 import (
+	"reflect"
 	"slices"
 	"testing"
 )
@@ -858,5 +859,93 @@ func TestList_Tail(t *testing.T) {
 				t.Errorf("Tail() = %v, want %v", got.ToSlice(), tt.want)
 			}
 		})
+	}
+}
+
+func TestList_Shuffle(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []int
+	}{
+		{name: "basic shuffle", input: []int{1, 2, 3, 4, 5}},
+		{name: "empty list", input: []int{}},
+		{name: "single element", input: []int{22}},
+		{name: "duplicate elements", input: []int{1, 1, 2, 2, 3, 3}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			list := NewList(tt.input)
+			shuffled := list.Shuffle()
+
+			// Verify length
+			if shuffled.Length() != list.Length() {
+				t.Errorf("Shuffle() length = %d, want %d", shuffled.Length(), list.Length())
+			}
+
+			// Verify element preservation
+			originalMap := make(map[int]int)
+			shuffledMap := make(map[int]int)
+			for _, v := range list.ToSlice() {
+				originalMap[v]++
+			}
+			for _, v := range shuffled.ToSlice() {
+				shuffledMap[v]++
+			}
+			if !reflect.DeepEqual(originalMap, shuffledMap) {
+				t.Errorf("Shuffle() elements mismatch, got %v, want %v", shuffledMap, originalMap)
+			}
+		})
+	}
+}
+
+func TestList_ShuffleRandomization(t *testing.T) {
+	input := []int{1, 2, 3, 4, 5, 6}
+	list := NewList(input)
+	iterations := 10000
+
+	sameOrderCount := 0
+	for i := 0; i < iterations; i++ {
+		shuffled := list.Shuffle()
+		if reflect.DeepEqual(input, shuffled.ToSlice()) {
+			sameOrderCount++
+		}
+	}
+
+	// Expect the same order to appear <5% of the time for small lists
+	threshold := 0.05 * float64(iterations)
+	if float64(sameOrderCount) > threshold {
+		t.Errorf("Shuffle() produced the same order %d times, exceeding threshold %f", sameOrderCount, threshold)
+	}
+}
+
+func TestList_ShuffleDistribution(t *testing.T) {
+	input := []int{1, 2, 3, 4}
+	list := NewList(input)
+
+	// Map to track the position of each value
+	positionCounts := make([]map[int]int, len(input))
+	for i := range positionCounts {
+		positionCounts[i] = make(map[int]int)
+	}
+
+	iterations := 10000
+	for i := 0; i < iterations; i++ {
+		shuffled := list.Shuffle()
+		for pos, val := range shuffled.ToSlice() {
+			positionCounts[pos][val]++
+		}
+	}
+
+	// Validate uniform distribution
+	expectedCount := iterations / len(input)
+	tolerance := 0.1 * float64(expectedCount)
+	for pos, counts := range positionCounts {
+		for val, count := range counts {
+			if float64(count) < float64(expectedCount)-tolerance || float64(count) > float64(expectedCount)+tolerance {
+				t.Errorf("Value %d appeared at position %d %d times, which is outside the tolerance range [%f, %f]",
+					val, pos, count, float64(expectedCount)-tolerance, float64(expectedCount)+tolerance)
+			}
+		}
 	}
 }

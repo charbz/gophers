@@ -6,6 +6,8 @@
 
 package collection
 
+import "math/rand"
+
 // Corresponds tests whether every element of this sequence relates to the corresponding
 // element of another sequence by satisfying a test predicate.
 //
@@ -307,6 +309,39 @@ func TakeRight[T any](s OrderedCollection[T], n int) OrderedCollection[T] {
 		return s.NewOrdered()
 	}
 	return s.Slice(max(s.Length()-n, 0), s.Length())
+}
+
+// Shuffle returns a new sequence with the elements randomly shuffled
+// This function makes use of the Fisher-Yates shuffle algorithm for optimal performance
+//
+// Example usage:
+//
+// c := NewSequence([]int{1,2,3,4,5})
+// c.Shuffle()
+//
+// possible output:
+//
+// [4,2,5,1,3]
+func Shuffle[T any](s OrderedCollection[T]) OrderedCollection[T] {
+	// Create a slice to hold indices for shuffling
+	indices := make([]int, s.Length())
+	for i := 0; i < s.Length(); i++ {
+		indices[i] = i
+	}
+
+	// Perform Fisher-Yates shuffle algorithm on the indices
+	for i := len(indices) - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		indices[i], indices[j] = indices[j], indices[i]
+	}
+
+	newCollection := s.NewOrdered()
+	// Add elements to the new collection in the shuffled order
+	for _, idx := range indices {
+		newCollection.Add(s.At(idx))
+	}
+
+	return newCollection
 }
 
 // StartsWith checks if the elements of the second collection (s2) match the
