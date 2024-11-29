@@ -411,6 +411,10 @@ func (l *List[T]) Reverse() *List[T] {
 	return collection.Reverse(l).(*List[T])
 }
 
+func (l *List[T]) Shuffle() *List[T] {
+	return collection.Shuffle(l).(*List[T])
+}
+
 // Reject is an alias for collection.FilterNot
 func (l *List[T]) Reject(f func(T) bool) *List[T] {
 	return collection.FilterNot(l, f).(*List[T])

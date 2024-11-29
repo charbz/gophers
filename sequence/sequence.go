@@ -343,3 +343,7 @@ func (c *Sequence[T]) Tail() *Sequence[T] {
 func (c *Sequence[T]) ToSlice() []T {
 	return c.elements
 }
+
+func (c *Sequence[T]) Shuffle() *Sequence[T] {
+	return collection.Shuffle(c).(*Sequence[T])
+}
